@@ -21,18 +21,76 @@
 \maketitle
 
 \begin{abstract}
-    Neural networks are a powerful machine learning tool that can be
-    used for a wide range of tasks, from image classification to natural
-    language processing. At their core, neural networks are composed
-    of interconnected nodes that process and transmit information. But
-    are they Turing complete? In this paper, we will explore the Turing
-    completeness of neural networks and the implications of this
-    property for their use in computation.
+    Neural networks are a powerful machine learning technique that can be applied to a variety of applications, from image classification to natural language processing. At a basic level, neural networks consist of interconnected nodes that transmit and locally process data, but this seamingly simple architecture allows for an impressive degree of adaptability. Since nowadays they are broadly used to solve virtually any form of task, we must question they actual expressive power: are they actually Turing complete?
+    In this paper, we will examine neural networks' Turing completeness and how it affects how they can be used for computation.
 \end{abstract}
 
 \section{Introduction}
 
 \epigraph{\textit{A neural network is the second best way to solve any problem. The best way is to actually understand the problem.}}{\textit{Unknown}}
+
+In 1989, Cybenko [quote] showed that for each continuous function there exists at least one neural network with a single hidden layer capable of approximating it to arbitrary accuracy. This result is significant because it implies that neural networks can be used to model a wide range of complex functions, including those with non-linear relationships between input and output variables. 
+Multiple variations to the standard architecture have been proposed and implemented (for example increasing the number of layers, including skip connections and adding loops to the computational graph) during the years, but we must assess whenever these alternatives actually increase the expressive power of the basic topology and if so, where is the boundary of this data structure's computability power.
+The current essay is structured in the following way: the rest of this section will introduce the foundamental concepts and notation for the rest of the material. In section 2 [quote] we'll analyze the Turing completeness of (recurrent) neural networks from a theoretical perspective, without caring about actual implementability of the systems described. In the following section we will instead take a look at concrete architectures that were proposed to simulate memory-bounded Turing machines. Finally, in the conclusions, we'll sum up the results and present the most obvious future work within this research field.
+
+\subsection{Turing Machines}
+
+Turing machines are a fundamental concept in the theory of computation, introduced by the mathematician Alan Turing in the 1930s [quote]. They provide a formal definition of what it means to compute a function, and have been instrumental in advancing our understanding of the limits of what can be computed by a mechanical process.
+
+A Turing machine consists of a tape divided into discrete cells, a read/write head that can move along the tape, and a set of rules that govern how the head interacts with the tape. The tape is initially populated with a finite sequence of symbols, and the machine is in a particular (starting) state. At each step, the machine reads the symbol under the head, performs a specified action (such as writing a new symbol, moving the head left or right, or changing its state), and then moves to the next cell on the tape. The output of the machine is determined by the final state and the symbols on the tape.
+
+Formally, a Turing machine can be represented using a quadruple
+
+\begin{equation}
+(Q \cup \{q_{\mathrm{accept}}, q_{\mathrm{reject}} \}, \Gamma, \delta, q_0)
+\end{equation}
+
+where:
+
+\begin{itemize}
+    \item $Q$ is a finite set of states.
+    \item $\Gamma$ is a finite set of tape symbols, which includes the blank symbol $\#$.
+    \item $\delta$ is a transition function that maps $Q \times \Gamma \rightarrow Q \times \Gamma \times \{L, R\}$, where $L$ and $R$ represent moving the head left or right on the tape.
+    \item $q_0 \in Q$ is the initial state.
+    \item $q_{\mathrm{accept}} \in Q$ is the accepting state.
+    \item $q_{\mathrm{reject}} \in Q$ is the rejecting state.
+\end{itemize}
+
+Before continuing, it's best that we also define the concept of istantaneous description of a Turing machine, since it will represent the starting (and ending) point of a simulation cycle by the neural networks that will be constructed.
+
+An instantaneous description of a Turing machine is a snapshot of its current state. It provides a complete description of the machine's configuration at a given point in time, including the contents of the tape, the position of the read/write head, and the current state of the machine.
+
+Formally, an instantaneous description can be represented as a 3-tuple $(q, l, r)$, where:
+
+\begin{itemize}
+    \item $q$ is the current state of the machine.
+    \item $l$ is the contents of the tape to the left of the read/write head.
+    \item $r$ is the contents of the tape to the right of the read/write head.
+\end{itemize}
+
+For example, if a Turing machine is in state $q_0$, with the tape contents "00101" and the read/write head positioned over the first symbol, the instantaneous description can be represented as $(q_0, \epsilon, 00101)$, where $\epsilon$ represents the empty string.
+
+The instantaneous description of a Turing machine is important because it allows us to reason about its behavior at a particular point in time. By examining the current state and tape contents, we can determine which transition the machine will take next, and how it will update its configuration. This allows us to analyze the computation of the machine step by step, and to understand how it processes input and produces output.
+
+\subsection{Neural Networks}
+
+Neural networks are a class of machine learning models that are designed to learn and recognize patterns in data. At their core, neural networks are composed of a large number of interconnected processing nodes, which are designed to simulate the behavior of neurons in the brain. As computer scientists, we are able to execute sophisticated computations on input data by connecting these nodes into intricate, layered structures, enabling the data structures themselves to deduce intricate patterns in the information provides and forecast future predictions on unseen examples.
+
+At the most basic level, a node in a neural network is a mathematical function that takes one or more inputs and produces a single scalar output. Each node is connected to one or more other nodes, composing a network of interconnected processing elements. The computed output of one node serves as the input to the next (that may be just one or multiple ones), allowing information to flow in a predetermined way through the network itself and be processed at each step.
+
+%%%%%%%%%%%AGGIUSTARE DA QUA
+Formally, a node in a neural network can be represented as a function $f(x)$, where $x$ is a vector of input values. The function applies a set of weights $w$ to the input vector, computes a weighted sum of the inputs, and applies an activation function $g$ to produce the node's output $y$. Mathematically, this can be expressed as:
+
+\begin{equation}
+    y = g(\sum_{i=1}^{n} w_i x_i)
+\end{equation}
+%%%%%%%%%%%%A QUA
+
+The weights in the function are learned through a process called training, which involves adjusting the weights to minimize the error between the network's output and the desired output. This allows the network to learn to recognize patterns in the data and make accurate predictions.
+
+The activation function $g$ is an important component of the node, as it determines the non-linearity of the network. Without a non-linear activation function, the network would be limited to performing linear transformations on the input data, which would severely limit its expressiveness. Common activation functions include the sigmoid function, the rectified linear unit (ReLU) function, and the hyperbolic tangent function.
+
+In summary, a node in a neural network is a mathematical function that takes input values, applies a set of weights, and applies an activation function to produce an output value. By combining nodes into complex, layered architectures, neural networks can perform sophisticated computations on input data, allowing them to recognize patterns and make predictions.
 
 % Bibliography
 \bibliographystyle{IEEEtran} % Choose a bibliography style
