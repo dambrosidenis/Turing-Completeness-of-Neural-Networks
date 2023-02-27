@@ -1,5 +1,11 @@
 \begin{thebibliography}{Cyb89}
 
+\bibitem[CS21]{CHU21}
+Stephen Chung and Hava~T Siegelmann.
+\newblock Turing completeness of bounded-precision recurrent neural networks.
+\newblock In A.~Beygelzimer, Y.~Dauphin, P.~Liang, and J.~Wortman Vaughan,
+  editors, {\em Advances in Neural Information Processing Systems}, 2021.
+
 \bibitem[Cyb89]{CYB89}
 George Cybenko.
 \newblock Approximation by superpositions of a sigmoidal function.
@@ -10,6 +16,11 @@ George Cybenko.
 David Kriesel.
 \newblock {\em A brief introduction to neural networks}.
 \newblock BoD--Books on Demand, Norderstedt, Germany, 1 edition, 2007.
+
+\bibitem[Sie95]{SIE995}
+Hava~T Siegelmann.
+\newblock Computation beyond the turing limit.
+\newblock {\em Science}, 268(5210):545--548, 1995.
 
 \bibitem[SS95]{SIE95}
 Hava~T Siegelmann and Eduardo~D Sontag.
