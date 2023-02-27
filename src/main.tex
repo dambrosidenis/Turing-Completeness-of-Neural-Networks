@@ -4,6 +4,7 @@
 \usepackage{amsmath} % For mathematical symbols and equations
 \usepackage{graphicx} % For including images
 \usepackage{cite} % For citations
+\usepackage{natbib} % For formatting citations
 \usepackage{url} % For URLs
 \usepackage{hyperref} % For clickable links
 \usepackage{epigraph} % For quotes
@@ -25,17 +26,21 @@
     In this paper, we will examine neural networks' Turing completeness and how it affects how they can be used for computation.
 \end{abstract}
 
+\tableofcontents
+
+\newpage
+
 \section{Introduction}
 
 \epigraph{\textit{A neural network is the second best way to solve any problem. The best way is to actually understand the problem.}}{\textit{Unknown}}
 
-In 1989, Cybenko [quote] showed that for each continuous function there exists at least one neural network with a single hidden layer capable of approximating it to arbitrary accuracy. This result is significant because it implies that neural networks can be used to model a wide range of complex functions, including those with non-linear relationships between input and output variables. 
+In 1989, Cybenko \cite{CYB89} showed that for each continuous function there exists at least one neural network with a single hidden layer capable of approximating it to arbitrary accuracy. This result is significant because it implies that neural networks can be used to model a wide range of complex functions, including those with non-linear relationships between input and output variables. 
 Multiple variations to the standard architecture have been proposed and implemented (for example increasing the number of layers, including skip connections and adding loops to the computational graph) during the years, but we must assess whenever these alternatives actually increase the expressive power of the basic topology and if so, where is the boundary of this data structure's computability power.
-The current essay is structured in the following way: the rest of this section will introduce the foundamental concepts and notation for the rest of the material. In section 2 [quote] we'll analyze the Turing completeness of (recurrent) neural networks from a theoretical perspective, without caring about actual implementability of the systems described. In the following section we will instead take a look at concrete architectures that were proposed to simulate memory-bounded Turing machines. Finally, in the conclusions, we'll sum up the results and present the most obvious future work within this research field.
+The current essay is structured in the following way: the rest of this section will introduce the foundamental concepts and notation for the rest of the material. In section \ref{sec:theoretical} we'll analyze the Turing completeness of (recurrent) neural networks from a theoretical perspective, without caring about actual implementability of the systems described. In the following section we will instead take a look at concrete architectures that were proposed to simulate memory-bounded Turing machines. Finally, in the conclusions, we'll sum up the results and present some expected future work within this research field.
 
 \subsection{Turing Machines}
 
-Turing machines are a fundamental concept in the theory of computation, introduced by the mathematician Alan Turing in the 1930s [quote]. They provide a formal definition of what it means to compute a function, and have been instrumental in advancing our understanding of the limits of what can be computed by a mechanical process.
+Turing machines are a fundamental concept in the theory of computation, introduced by the mathematician Alan Turing in 1937 \cite{TUR37}. They provide a formal definition of what it means to compute a function, and have been instrumental in advancing our understanding of the limits of what can be computed by a mechanical process.
 
 A Turing machine consists of a tape divided into discrete cells, a read/write head that can move along the tape, and a set of rules that govern how the head interacts with the tape. The tape is initially populated with a finite sequence of symbols, and the machine is in a particular (starting) state. At each step, the machine reads the symbol under the head, performs a specified action (such as writing a new symbol, moving the head left or right, or changing its state), and then moves to the next cell on the tape. The output of the machine is determined by the final state and the symbols on the tape.
 
@@ -78,22 +83,36 @@ Neural networks are a class of machine learning models that are designed to lear
 
 At the most basic level, a node in a neural network is a mathematical function that takes one or more inputs and produces a single scalar output. Each node is connected to one or more other nodes, composing a network of interconnected processing elements. The computed output of one node serves as the input to the next (that may be just one or multiple ones), allowing information to flow in a predetermined way through the network itself and be processed at each step.
 
-%%%%%%%%%%%AGGIUSTARE DA QUA
-Formally, a node in a neural network can be represented as a function $f(x)$, where $x$ is a vector of input values. The function applies a set of weights $w$ to the input vector, computes a weighted sum of the inputs, and applies an activation function $g$ to produce the node's output $y$. Mathematically, this can be expressed as:
+Following the definition used by David Kriesel \cite{KRI07}, we can define a neuron as a node that computes the composition of three separate functions:
 
-\begin{equation}
-    y = g(\sum_{i=1}^{n} w_i x_i)
-\end{equation}
-%%%%%%%%%%%%A QUA
+\begin{enumerate}
+    \item A \textbf{net} function, that aggregates the input values from the input neurons
+    \item An \textbf{activation} function, that maps the net value and a threshold value called \textbf{bias} into a single scalar value
+    \item An \textbf{output} function, that transforms the "activated value" of the neuron into an output scalar that can be forwarded to the following neurons
+\end{enumerate}
 
-The weights in the function are learned through a process called training, which involves adjusting the weights to minimize the error between the network's output and the desired output. This allows the network to learn to recognize patterns in the data and make accurate predictions.
+In practice, a weighted sum is istantiated as net function, a sigmoid ($\sigma(z)=1/(1+e^{-z})$) or \textit{ReLU} ($\sigma(z) = max(0,z)$) function is chosen as activation and the output is left as the identity. Although most of the real architectures do not differ much from this last blueprint, keeping in mind the more general definition will allow us to better investigate the expressive power of these structures.
 
-The activation function $g$ is an important component of the node, as it determines the non-linearity of the network. Without a non-linear activation function, the network would be limited to performing linear transformations on the input data, which would severely limit its expressiveness. Common activation functions include the sigmoid function, the rectified linear unit (ReLU) function, and the hyperbolic tangent function.
+The weights in the net function are learned through a process called training, which involves adjusting the weights to minimize the error between the network's output and the desired output. This allows the network to learn to recognize patterns in the data and make accurate predictions. In order to do so, we generally use the backpropagation algorithm [quote], that requires all of the operations computed within the network to be differentiable in order to compute a gradient.
 
-In summary, a node in a neural network is a mathematical function that takes input values, applies a set of weights, and applies an activation function to produce an output value. By combining nodes into complex, layered architectures, neural networks can perform sophisticated computations on input data, allowing them to recognize patterns and make predictions.
+It's also important to keep in mind that at least one of the three composed functions (generally the activation) needs to introduce non-linearity to the system: otherwise, the network would be limited to performing linear transformations on the input data, which would severely limit its expressiveness.
+
+Taking a closer look to the types of connection within a network, we can disciminate between two main kinds of architectures:
+
+\begin{itemize}
+    \item \textbf{Feedforward Neural Networks} (FFNNs) are networks that have a single flow of input, where the data is processed from the input layer through one or more hidden layers to the output layer. In FFNNs, the information flows in one direction, from the input to the output layer, with no feedback connections: the output of one layer serves as the input for the next layer.
+
+    \item On the other hand, \textbf{Recurrent Neural Networks} (RNNs) are designed to process sequential data, where the order of the data points matters. RNNs have loops in the network, which allow the output of a given layer to be fed back as input to the same layer or to a previous layer in the network. RNNs can maintain a sort of "memory" of previous inputs, which enables them to handle sequential data such as speech, text, and time series data. The main advantage of RNNs is their ability to model sequences of arbitrary length and process input data of variable size. We will shortly see how this property will be crucial to obtain Turing completeness.
+\end{itemize}
+
+\section{Theoretical Turing completeness of RNNs}\label{sec:theoretical}
+
+In this section we will further investigate the expressive power of Recurrent Neural Networks without taking into consideration the actual realizability of the systems taken into consideration. This branch of research has been initially explored by Siegelmann and Sontag in 1995 \cite{SIE95}, when they presented a theoretical framework for understanding the computational power of neural networks, and in particular, their ability to simulate the behavior of Turing machines.
+
+This result has significant implications for the field of artificial intelligence and computer science, as it shows that neural networks are not just powerful tools for solving specific problems, but can also serve as a universal computational substrate capable of performing any computation that can be performed by a Turing machine. PROBLEM WITH THE RESULT (FRACTAL ENCODING)
 
 % Bibliography
-\bibliographystyle{IEEEtran} % Choose a bibliography style
+\bibliographystyle{alpha} % Choose a bibliography style
 \bibliography{references} % Specify the bibliography file
 
 \end{document}

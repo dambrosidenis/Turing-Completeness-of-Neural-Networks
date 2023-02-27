@@ -1,0 +1,26 @@
+\begin{thebibliography}{Cyb89}
+
+\bibitem[Cyb89]{CYB89}
+George Cybenko.
+\newblock Approximation by superpositions of a sigmoidal function.
+\newblock {\em Mathematics of Control, Signals, and Systems}, 2(4):303--314,
+  1989.
+
+\bibitem[Kri07]{KRI07}
+David Kriesel.
+\newblock {\em A brief introduction to neural networks}.
+\newblock BoD--Books on Demand, Norderstedt, Germany, 1 edition, 2007.
+
+\bibitem[SS95]{SIE95}
+Hava~T Siegelmann and Eduardo~D Sontag.
+\newblock On the computational power of neural nets.
+\newblock {\em Journal of Computer and System Sciences}, 50:132--150, 1995.
+
+\bibitem[Tur37]{TUR37}
+Alan~M Turing.
+\newblock On computable numbers, with an application to the
+  entscheidungsproblem.
+\newblock {\em Proceedings of the London Mathematical Society}, 2(1):230--265,
+  1937.
+
+\end{thebibliography}
