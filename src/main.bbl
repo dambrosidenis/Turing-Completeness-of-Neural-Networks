@@ -12,6 +12,11 @@ George Cybenko.
 \newblock {\em Mathematics of Control, Signals, and Systems}, 2(4):303--314,
   1989.
 
+\bibitem[HS66]{HEN66}
+Frederick~C Hennie and Richard~E Stearns.
+\newblock Two-tape simulation of multitape turing machines.
+\newblock {\em Journal of the ACM (JACM)}, 13(4):533--546, 1966.
+
 \bibitem[Kri07]{KRI07}
 David Kriesel.
 \newblock {\em A brief introduction to neural networks}.

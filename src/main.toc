@@ -11,3 +11,6 @@
 \contentsline {subsection}{\numberline {2.2}Growing memory modules}{9}{subsection.2.2}%
 \contentsline {paragraph}{Actual proof}{10}{section*.7}%
 \contentsline {paragraph}{Corollary}{11}{section*.8}%
+\contentsline {subsection}{\numberline {2.3}Unbounded neurons}{12}{subsection.2.3}%
+\contentsline {paragraph}{Actual proof}{13}{section*.9}%
+\contentsline {paragraph}{Corollaries}{14}{section*.10}%

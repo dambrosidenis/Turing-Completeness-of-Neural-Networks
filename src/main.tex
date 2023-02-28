@@ -150,7 +150,7 @@ The construction of $\rho$ is provided earlier in the article: it includes a ver
     That is, the $i$-th coordinate of the encoding is equal to $1$ if the symbol is bigger then $2i$ and $0$ otherwise. A simple example of this encoding would be that if we had $\Gamma=\{1,3,5\}$, then $\rho^{(r)}(1)=[0,0],\ \rho^{(r)}(3)=[1,0],\ \rho^{(r)}(5)=[1,1]$.    
 \end{itemize}
 
-Finally, note that $\rho$ is injective: thus we can define an inverse function $\rho^-1$ that allows us to compute the configuration encoded by a valid vector.
+Finally, note that $\rho$ is injective, thus we can define an inverse function $\rho^-1$ that allows us to compute the configuration encoded by a valid vector.
 
 \paragraph{$\mathcal{P}_{\mathcal{M}}(x)$} With this notation, the authors simply refer to the transition step between the configuration $x$ of the Turing machine $\mathcal{M}$ and it's successor according to $\mathcal{M}$'s $\delta$ function (represented by $\mathcal{P}_{\mathcal{M}}$).
 
@@ -208,7 +208,7 @@ and $\mathcal{T}^*_{W,b}(\rho(x))$ is undefined otherwise.
 
 Furthermore, since Neary and Woods in 2009 introduced a $6$ states and $4$ symbols universal Turing machine \cite{NEA09}, we can state that there exists a $40$-neuron unbounded-precision RNN that can simulate any Turing machine in time $\mathcal{O}(T^6)$.
 
-\subsection{Growing memory modules}
+\subsection{Growing memory modules}\label{sec:growingmodules}
 The second addend within formula \ref{eq:fractal} allows to remove the unlimited precision requirement introduced in \cite{SIE95} to encode the infinite number of blank symbols on the tape, but the proof of theorem \ref{th:theorem1} still needs registers with unbounded precision, making any practical implementation impossible.
 
 In the article they also introduced the idea of a \textit{growing memory module}, that can be used as an external stack of neurons to store part of the tape of a Turing machine. The dynamics of this stack is controlled by two neurons called $u$ and $o$, which are responsible for the popping and the pushing operations. Keeping into consideration the notion of time already introduced to define the evolution of an RNN, we can describe the update of the stack as follows:
@@ -233,7 +233,7 @@ The idea is the same as behind theorem \ref{th:theorem1}, but the construction o
 \begin{itemize}
     \item Since (as we will soon explain) we only need to keep a part of the tape within the RNN, $\rho^{(s)}$ does not need to take care of the infinite series of blanks anymore, thus it can be simply replaced by
 
-    \begin{equation}
+    \begin{equation}\label{eq:fractalNoBlanks}
         \rho^{(s)}(y) := \left(\sum_{i=1}^{|y|} \frac{y_{(i)}}{{(2|\Gamma|)^i}}\right)
     \end{equation}
 
@@ -250,7 +250,7 @@ As a whole, $\rho$ will be computed similarly to how it was defined in the previ
 Similarly to the previous section, $\rho$ is injective, thus we can define the decoder function $\rho^{-1}:\rho(\mathcal{X}) \rightarrow \mathcal{X}$.
 
 \paragraph{Actual proof}
-Again, in the supplementary material we can find the full-detailed proof of the simulation of a Turing machine using an RNNs. We will only discuss succintly the key ideas behind the construction.
+Again, in the supplementary material we can find the full-detailed proof of the simulation of a Turing machine using an RNN. We will only discuss succintly the key ideas behind the construction.
 
 First of all, we must define how $h(|s_j|)$ evolves during time, to understand which is the criterion that the RNNs uses to pop and push neurons in the stacks. In the case of $h(|s_L|)$, we have that:
 
@@ -272,10 +272,10 @@ Having defined how this quantity varies through execution, we can proceed by ana
     \setcounter{enumi}{7}
     \item Guard neurons, which will keep track of $h(|s_L|)$ and $h(|s_R|)$.
     \item Buffer neurons, that are required to compute intermediate values for tape updates: when active (thus, not equal to $0$), they hold the values popped from the stacks.
-    \item Push-pop neurons $(u_L,o_L)$ and $(u_R,o_R)$ modify the memory modules, as described previously.
+    \item Push-pop neurons $(u_L,o_L)$ and $(u_R,o_R)$, which access the memory modules, as described previously.
 \end{enumerate}
 
-The simulation is executed again during three main steps and the newly introduced neurons are evolve during the second stage. The nodes presented in the previous section are updated with an alternative version of the original equations, that take into consideration the external memory modules:
+The simulation is executed again during three main steps and the newly introduced neurons evolve during the second stage. The nodes presented in the previous section are updated with an alternative version of the original equations, that take into consideration the external memory modules:
 
 \begin{itemize}
     \item Tape neurons not only take into consideration temporary tapes, but also the values of the buffer neurons.
@@ -296,6 +296,60 @@ Furthermore, in analogy with the previous section, we can state that there exist
 
 This proof shows a (technically) possible implementation of the actual RNN (assuming we have enough memory to run any Turing machine we want to emulate) which allows for fast manipulation of the data: although the simulation of a single transition requires three stages of computation in both constructions, the network with the growing memory module only requires updating the symbols near the head at each step, while the unbounded precision architecture needed to take into consideration all the tape.
 Unfortunately, as the authors explain in the conclusion, the RNN presented in this section is not trainable as of today, since the non-differentiability of the growing memory modules doesn't allow us exploit error backpropagation. Possible solutions would be to construct a differentiable version of the memory modules or to use a different learning rule to deal with the discrete pushing and popping operations.
+
+\subsection{Unbounded neurons}
+Siegelmann and Chung's article presented in conclusion a third final theorem, which explored another (arguably even less implementable) path to obtain Turing completeness: having at disposal an unbounded number of neurons of finite precision in order to encode the tape of the machine. The authors state that this could be either achieved by having an illimitate number of neurons at the beginning of the simulation, or by increasing the numerosity of the nodes of the networks on the fly based on the states reached by the RNN during the computation. Although this result (explained in corollary 3.1 of the paper) has apparently limited practical implications (at least for now), the path that the authors undertook to state it produced some concrete conclusions about the topic: before generalizing to an unbounded network, they actually proved that any memory-bounded Turing machine can be simulated by an RNN of predetermined size. The theorem is stated as follows:
+
+\begin{theorem}\label{th:theorem3}
+    Given a Turing machine $\mathcal{M}$ with a bounded tape of size $F$, there exists an injective function $\rho:\mathcal{X} \rightarrow \mathbb{Q}^n$ and an $n$-neuron $p$-precision (in base $|2\Gamma|$) RNN $\mathcal{T}_{W,b}:\mathbb{Q}^n \to \mathbb{Q}^n$, where $n=\mathcal{O}(\lceil F/p \rceil)$ and $p \geq 2$, such that for all instantaneous descriptions $x \in \mathcal{X}$,
+
+    $$\rho^{-1}(\mathcal{T}^3_{W,b}(\rho(x))) = \mathcal{P}_{\mathcal{M}}(x)$$
+\end{theorem}
+
+Again, it is sensible to take a closer look to the definition of $\rho$ before continuing with the proof overview. In this case, the encoding function is a combination of the constructions presented in the previous sections: on one side, it must encode the tape into different sections of at most $p$ symbols; on the other hand, it has to map the entire configuration onto a single array instead of a triple since we want all the information to remain within the RNN itself. $\rho$ is thus defined as $\rho:\mathcal{X} \to \mathbb{Q}^n$, where $n = 2|\Gamma|+\lceil \log_2|Q|\rceil |Q||\Gamma| + 10f + 11$. As before, it will be constructed by concatenation of different encodings, of which we will now show the computation:
+
+\begin{itemize}
+    \item $\rho^{(q)}, \rho^{(s)}, \rho^{(r)}$ and $\rho^{(h)}$ are the same functions as seen in the previous section.
+
+    \item $\rho^{(M)}$ is defined in a very similar way to the tape encoding function introduced in the construction of theorem \ref{th:theorem2}: it first divides the sequence of symbols to process into lists of length at most $p$ and then transforms them using the fractal encoding function defined in equation \ref{eq:fractalNoBlanks}. The difference with the previously defined $\rho^{(M)}$ is that this version, instead of pushing the processed sequences into a stack, concatenates them into a vector of length $f=\lceil F/p \rceil$. Note that this array may feature trailing $0$s to account for unnecessary tape space filled with blanks.
+    
+    \item $\rho^{(d)}: Q^* \to \{0,1\}^f$ encodes the position of the last non-zero element in $\rho^{(M)}(y)$. It is defined as
+
+    \begin{equation}
+        \rho^{(d)}_i(y)=
+        \begin{cases}
+            1 & \textrm{ if } = \lceil |y|/p-1 \rceil\\
+            0 & \textrm{ else }
+        \end{cases}
+    \end{equation}
+
+    that is, the $i$-th coordinate ($i \in {1,...,f}$) of $\rho^{(d)}(y)$ is equal to $1$ if and only if it is the position of the last non-zero element of the encoding of the tape. We need this information to keep track of how many sections of the tape contain actual information (before the blank symbols).
+\end{itemize}
+
+\paragraph{Actual proof}
+The construction of this RNNs recycles most of the work done for theorem \ref{th:theorem2} but, instead of push and pop neurons, it introduces yet again two new types of nodes:
+
+\begin{itemize}
+    \item Stack neurons are introduced to replace growing memory modules: they are initialised through an application the freshly described $\rho^{(M)}$ and must encode the tape to the left and to the right of the head.
+    \item Pointer neurons, which are istantiated with values calculated by a computation of the $\rho^{(d)}$ function; these nodes must keep track of which neurons contain relevant information. Note that these neurons can be seen as a one-hot-encoding of the sequences closest to the head, thus can be used to selectively execute operations on the stacks.
+\end{itemize}
+
+Moreover, buffer neurons do not access values within the external modules, but, instead, read values from the last non-zero values of the stack neurons.
+
+As explained in supplementary material of the article, the objective is to remove the growing memory modules introduced in the previous section by storing all neurons encoding the tape within the RNN itself. The rest of the operations are only slighty changed: if the tape neuron holds less than $1$ symbol after the update, we pop the stack node (that is, setting the last non-zero stack neuron to 0, changing the relative pointer nodes and updating the tape and readout values). On the other hand, if the tape neuron holds more than $p$ symbols after the update, we push the bottom $p$ symbols of the tape node onto the stack neurons (by setting the first zero neuron pointed by the pointer nodes to the value to be pushed).
+
+As before, the simulation of a transition of $\mathcal{M}$ is executed in 3 cycles of computation of $\mathcal{T}_{W,b}$. All the stages remain the same to the ones explained in section \ref{sec:growingmodules}, with additional care for the newly introduced neurons, that are updated during the third (and last) step.
+
+Again, we encourage taking a look at appendix C of \cite{CHU21} for all the details about the equations involved.
+
+\paragraph{Corollaries}
+By proving the previous theorem, Siegelmann and Chung implicitly demonstrated that any space-bounded Turing machine can be simulated by a carefully constructed RNN: by applying theorem \ref{th:theorem3} repeatedly, we can yet again reach the conclusion that, given a Turing machine $\mathcal{M}$ and a starting instantaneous description $x$, we can simulate $\mathcal{P}_{\mathcal{M}}(x)$ through a $n$-neuron $p$-precision recurrent network $\mathcal{T}_{W,b}$:
+
+$$\rho^{-1}(\mathcal{T}^3_{W,b}(\rho(x))) = \mathcal{P}_{\mathcal{M}}(x)$$
+
+such that $\mathcal{T}^3_{W,b}(\rho(x))$ is defined if and only if $\mathcal{P}_{\mathcal{M}}(x)$ is defined.
+Consequently, by unbounding the number of neurons, we can simulate any possible Turing machine. Since we do not take into consideration the size of the network anymore, we can exploit the construction provided by Hennie and Stearns \cite{HEN66} to show that there exists an unbounded-neuron, bounded-precision RNN capable of simulating any Turing machine in time $\mathcal{O}(T \log T)$.
+
 
 % Bibliography
 \clearpage
