@@ -86,7 +86,7 @@ Neural networks are a class of machine learning models that are designed to lear
 
 At the most basic level, a node in a neural network is a mathematical function that takes one or more inputs and produces a single scalar output. Each node is connected to one or more other nodes, composing a network of interconnected processing elements. The computed output of one node serves as the input to the next (that may be just one or multiple ones), allowing information to flow in a predetermined way through the network itself and be processed at each step.
 
-Following the definition used by David Kriesel \cite{KRI07}, we can define a neuron as a node that computes the composition of three separate functions:
+Following the explaination written by David Kriesel \cite{KRI07}, we can define a neuron as a node that computes the composition of three separate functions:
 
 \begin{enumerate}
     \item A \textbf{net} function, that aggregates the input values from the input neurons
@@ -114,14 +114,14 @@ In this section we will further investigate the expressive power of Recurrent Ne
 
 This result has significant implications for the field of artificial intelligence and computer science, as it shows that neural networks are not just powerful tools for solving specific problems, but can also serve as a universal computational substrate capable of performing any computation that can be performed by a Turing machine.
 
-Unfortunately, this result is not applicable to real-life recurrent architectures since we would require registers to have unbounded precision to store the content of the tape using rational numbers through a fractal encoding function.
+Unfortunately, this result is not applicable to real-life recurrent architectures since we would require registers to have unlimited precision to store the content of the tape using rational numbers through a fractal encoding function.
 Still, in 2021 Chung and Siegelmann published another article \cite{CHU21} about the expressiveness of recurrent networks: this paper did not introduce any practical implications about the Turing completeness of these data structures but clarified some aspects about the previous proof from 1995 and partially solved the finite precision problem by introducing other caveauts. In the rest of this section we will take a brief look at the results provided by this article, as well as their issues.
 
 \subsection{Unbounded precision}
 
-The first theorem presented in \cite{CHU21} does not add any additional information to the proof from 1995 from a theoretical standpoint, but it provides a clearer explaination and a slighty faster (from $4$ to $3$ steps to simulate a single Turing machine transition) simulation; it states:
+The first theorem presented in \cite{CHU21} contributes with only very few additional implications with respect to the proof from 1995 from a practical standpoint, but it provides a clearer explaination and a slighty faster (only a linear speedup) simulation; it states:
 
-\begin{theorem}
+\begin{theorem}\label{th:theorem1}
     Given a Turing Machine $\mathcal{M}$, there exists an injective function $\rho: \mathcal{X} \rightarrow \mathbb{Q}^N$ and an $n$-neuron unbounded-precision RNN $\mathcal{T}_{W,b}: \mathbb{Q}^n \rightarrow \mathbb{Q}^n$, where $n=2|\Gamma|+\lceil \log_2|Q|\rceil |Q||\Gamma| + 5$ such that for all istantaneous descriptions
     
     $$\rho^{-1}(\mathcal{T}^3_{W,b}(\rho(x))) = \mathcal{P}_{\mathcal{M}}(x)$$
@@ -136,7 +136,7 @@ The construction of $\rho$ is provided earlier in the article: it includes a ver
     \item $\rho^{(q)}: Q \rightarrow \{0,1\}^{\lceil \log_2 Q \rceil}$ maps the states into a binary enumeration (for example, assuming we have $Q=\{q_0,q_1,q_2\}$, we can define a state encoding as $\rho^{(q)}(q_0)=[0,0],\ \rho^{(q_1)}(q_0)=[0,1],\ \rho^{(q_2)}(q_0)=[1,0]$)
     \item $\rho^{(s)}: \Gamma* \to \mathbb{Q}$ is used to encode the left and right tape using the following fractal encoding function:
 
-        \begin{equation}
+        \begin{equation}\label{eq:fractal}
             \rho^{(s)}(y) := \left(\sum_{i=1}^{|y|} \frac{y_{(i)}}{{(2|\Gamma|)^i}}\right) + \frac{1}{(2|\Gamma|)^{|y|}(2|\Gamma|-1)}
         \end{equation}
 
@@ -147,11 +147,112 @@ The construction of $\rho$ is provided earlier in the article: it includes a ver
             \rho^{(r)}_i(s) = 1\{s > 2i\}\ \forall i \in {1,..,|\Gamma|-1}
         \end{equation}
 
-    That is, the $i$-th coordinate of the encoding is equal to $1$ if the symbol is bigger then $2i$ and $0$ otherwise. A simple example of this encoding would be that if we had $\Gamma=\{1,3,5\}$, then $\rho^{(r)}(1)=[0,0],\ \rho^{(r)}(3)=[1,0],\ \rho^{(r)}(5)=[1,1]$.
-    
+    That is, the $i$-th coordinate of the encoding is equal to $1$ if the symbol is bigger then $2i$ and $0$ otherwise. A simple example of this encoding would be that if we had $\Gamma=\{1,3,5\}$, then $\rho^{(r)}(1)=[0,0],\ \rho^{(r)}(3)=[1,0],\ \rho^{(r)}(5)=[1,1]$.    
 \end{itemize}
 
+Finally, note that $\rho$ is injective: thus we can define an inverse function $\rho^-1$ that allows us to compute the configuration encoded by a valid vector.
+
+\paragraph{$\mathcal{P}_{\mathcal{M}}(x)$} With this notation, the authors simply refer to the transition step between the configuration $x$ of the Turing machine $\mathcal{M}$ and it's successor according to $\mathcal{M}$'s $\delta$ function (represented by $\mathcal{P}_{\mathcal{M}}$).
+
+\paragraph{$\mathcal{T}_{W,b}^3$} The simulation of one step the Turing machine $\mathcal{M}$ requires $3$ cycles of computation by the RNN $\mathcal{T}_{W,b}$, which we consider already trained on with weights $W$ and biases $b$. We need to note that, within this paper, we consider a single computation of the RNN as an affine transformation of the values of the previous state (thus the implicit introduction of time) followed by the linear saturated activation function $\sigma$:
+
+    \begin{equation}
+        \sigma(x)=
+            \begin{cases}
+                0 & \text{if} x < 0\\
+                x & \text{if} 0 \leq x \leq 1\\
+                1 & \text{if} x > 1
+            \end{cases} 
+    \end{equation}
+
+In practice, given a state $x(t)$ at time $t$, the following state $x(t+1)$ will be recursively computed as:
+
+    \begin{equation}\label{eq:rnnformula}
+        x(t+1) = \sigma(Wx(t) + b)
+    \end{equation}
+
+It's interesting to notice that, with this definition, we apparently do not have any inputs nor outputs, only relations between internal states. This is not a problem since we assume to be able to access and modify the internal representation of the network by keeping track of the activations of the neurons: before the first step of the computation we need to encode a valid configuration $x$ into the neurons of $\mathcal{T}_{W,b}$ by applying $\rho$ to $x$ and then assigning its coordinates to different neurons according to their function. A more precise explaination will be provided shortly, but, before continuing, we wanted to also note that this proof can be easily expanded to standard input/output RNNs by applying the construction provided by section 4.4 of \cite{SIE95}, which showed the equivalence between these two classes of networks. Finally, we can appreciate now how recurrence is crucial in order to obtain Turing completeness: without this ingredient, we would only have a finite amount of steps to calculate the transitions between configurations. We are thus able to conclude that feed forward neural networks can, at most, simulate time-bounded Turing machines.
+
+\paragraph{Actual proof}
+The article provides a full-detailed proof within its supplementary material, but for the sake of briefness we will now only highlight its key concepts.
+
+The network is subdivided into 6 main groups of neurons:
+
+\begin{enumerate}
+    \item Stage neurons, that encode in which of the 3 states the RNN is (remember that we need 3 steps of computation to simulate a Turing machine transition).
+    \item Entry neurons, which compute the combination of state and symbol under the head to determine the right transition rule according to the $\delta$ function of the Turing machine.
+    \item Temporary tape neurons, which serve as a buffer to compute the transition of the head on the tape during the second stage.
+    \item Tape neurons, that encode the left and right tape in fractal encoding through equation \ref{eq:fractal}
+    \item Readout neurons, which encode the first symbol to the left and to the right of the head (note that within this proof, the first symbol to the left is considered as the cell under the cursor).
+    \item State neurons, which encode the Turing machine's state
+\end{enumerate}
+
+As previously said, we need to initialise these neurons with different coordinates of the encoded configuration $\rho(x)$ according to their function. The actual simulation is executed through a series of differentiable equations that follow the general structure of formula \ref{eq:rnnformula}. The said three steps can be summarized as following:
+
+\begin{enumerate}
+    \item In the first step, entry neurons, which are initialized with $\mathbf{0}$ compute the state-symbol combination in order to determine the next transition according to $\mathcal{M}$'s $\delta$.
+    \item In the second step, state neurons and temporary tape neurons are updated according to the transition determined in the previous stage. Note that temporary tape neurons server as a buffer for tape neurons when shifting the tape
+    \item In the third stage, tape neurons are updated with the temporary neurons values
+\end{enumerate}
+
+Note that readout and stage neurons are never quoted in this summary since are "used" multiple times. Stage neurons inhibit the update in neurons during the wrong timestamps (for example, we want tape neurons to remain unchanged during the first two steps) by subtracting its coordinates within the relative affine transformations. Similarly, readout neurons are used during the update of entry and temporary tape neurons, that happen at different stages of the simulation.
+
+For more details about the proof, please refer to appendix A of \cite{CHU21}
+
+\paragraph{Corollaries}
+By applying \ref{th:theorem1} multiple times, we can simulate each step of the computation of a Turing machine $\mathcal{M}$ and compute the same function (if defined). This result is explained in corollary 1.1 of the paper, where they state that if $\mathcal{P}*_{M}$ is defined, then
+
+$$\rho^{-1}(\mathcal{T}^*_{W,b}(\rho(x))) = \mathcal{P}^*_{\mathcal{M}}(x)$$
+
+and $\mathcal{T}^*_{W,b}(\rho(x))$ is undefined otherwise.
+
+Furthermore, since Neary and Woods in 2009 introduced a $6$ states and $4$ symbols universal Turing machine \cite{NEA09}, we can state that there exists a $40$-neuron unbounded-precision RNN that can simulate any Turing machine in time $\mathcal{O}(T^6)$.
+
+\subsection{Growing memory modules}
+The second addend within formula \ref{eq:fractal} allows to remove the unlimited precision requirement introduced in \cite{SIE95} to encode the infinite number of blank symbols on the tape, but the proof of theorem \ref{th:theorem1} still needs registers with unbounded precision, making any practical implementation impossible.
+
+In the article they also introduced the idea of a \textit{growing memory module}, that can be used as an external stack of neurons to store part of the tape of a Turing machine. The dynamics of this stack is controlled by two neurons called $u$ and $o$, which are responsible for the popping and the pushing operations. Keeping into consideration the notion of time already introduced to define the evolution of an RNN, we can describe the update of the stack as follows:
+
+\begin{itemize}
+    \item if $u(t) > 0$, then a new neuron with the value $u(t)$ is pushed onto the stack and $u(t+1) = 0$.
+    \item if $o(t) = 0$ and the stack is not empty, then the top neuron $n$ is popped from the stack and $o(t+1) = n$.
+    \item if $o(t) = 0$ and the stack is empty, then $o(t+1) = c$ where $c$ is a default value.
+\end{itemize}
+
+We can define an RNN with two growing memory modules (following the key idea of simulating a Turing machine with a 2-stack pushdown atomata) as a mapping $\mathcal{T}_{W,b}:(\mathbb{Q}^N,\mathbb{Q}^*,\mathbb{Q}^*) \rightarrow (\mathbb{Q}^N,\mathbb{Q}^*,\mathbb{Q}^*)$.
+
+The following result, presented in the article, aims at removing the unbounded precision requirement previously introduced with theorem \ref{th:theorem1}:
+
+\begin{theorem}\label{th:theorem2}
+    Given a Turing Machine $\mathcal{M}$, there exists an injective function $\rho:\mathcal{X} \rightarrow (\mathbb{Q}^n, \mathbb{Q}^*, \mathbb{Q}^*)$ and an $n$-neuron $p$-precision (in base $2|\Gamma|$) RNN with two growing memory modules $\mathcal{T}_{W,b}:(\mathbb{Q}^n, \mathbb{Q}^*, \mathbb{Q}^*) \rightarrow (\mathbb{Q}^n, \mathbb{Q}^*, \mathbb{Q}^*)$, where $n=2|\Gamma|+\lceil \log_2|Q|\rceil |Q||\Gamma| + 19$ and $p \geq 2$, such that for all instantaneous descriptions $x \in \mathcal{X}$,
+    
+    $$\rho^{-1}(\mathcal{T}^3_{W,b}(\rho(x))) = \mathcal{P}_{\mathcal{M}}(x)$$
+\end{theorem}
+
+The idea is the same as behind theorem \ref{th:theorem1}, but the construction of $\rho$ need to undergo some changes:
+\begin{itemize}
+    \item Since (as we will soon explain) we only need to keep a part of the tape within the RNN, $\rho^{(s)}$ does not need to take care of the infinite series of blanks anymore, thus it can be simply replaced by
+
+    \begin{equation}
+        \rho^{(s)}(y) := \left(\sum_{i=1}^{|y|} \frac{y_{(i)}}{{(2|\Gamma|)^i}}\right)
+    \end{equation}
+
+    \item We need to keep track the number of symbols currently stored within the RNN neurons: this information will be defined as $h(|s_j|)$, where $j$ indicates whenever we are referring to the left tape $s_L$ or the right tape $s_R$. $h(|s_j|)$ is then encoded through $\rho^{(h)}$, defined as:
+
+    \begin{equation}
+        \rho^{(h)}(y) = \frac{y}{p+1}
+    \end{equation}
+    
+    \item Finally, to save the content of the tape in the memory modules, we define the $\rho^{(M)}$ function, which, starting from the symbols furthest from the head, encodes $p$ symbols at a time through $\rho^{(s)}$ in each direction and then pushes the obtained value in the relative stack.
+\end{itemize}
+
+As a whole, $\rho$ will be computed similarly to how it was defined in the previous section: the first coordinate of $\rho(q,s_L,s_R)$ will be the concatenation of the encodings of the state, the first $h(|s_L|)$ and $h(|s_R|)$ symbols, the following $p$ symbols for each side of the tape, the guard symbols on the sides of the head, $h(|s_L|)$ and $h(|s_R|)$. The second and the third coordinates will be the encodings (as growing memory modules) of the two sides of the tape.
+Similarly to the previous section, $\rho$ is injective, thus we can define the decoder function $\rho^{-1}:\rho(\mathcal{X}) \rightarrow \mathcal{X}$.
+
+\paragraph{Actual proof}
+
 % Bibliography
+\clearpage
 \bibliographystyle{alpha} % Choose a bibliography style
 \bibliography{references} % Specify the bibliography file
 

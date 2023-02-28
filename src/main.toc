@@ -4,3 +4,8 @@
 \contentsline {section}{\numberline {2}Theoretical Turing completeness of RNNs}{5}{section.2}%
 \contentsline {subsection}{\numberline {2.1}Unbounded precision}{5}{subsection.2.1}%
 \contentsline {paragraph}{$\rho $}{6}{section*.2}%
+\contentsline {paragraph}{$\mathcal {P}_{\mathcal {M}}(x)$}{6}{section*.3}%
+\contentsline {paragraph}{$\mathcal {T}_{W,b}^3$}{7}{section*.4}%
+\contentsline {paragraph}{Actual proof}{7}{section*.5}%
+\contentsline {paragraph}{Corollaries}{8}{section*.6}%
+\contentsline {subsection}{\numberline {2.2}Growing memory modules}{9}{subsection.2.2}%

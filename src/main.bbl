@@ -17,6 +17,11 @@ David Kriesel.
 \newblock {\em A brief introduction to neural networks}.
 \newblock BoD--Books on Demand, Norderstedt, Germany, 1 edition, 2007.
 
+\bibitem[NW09]{NEA09}
+Turlough Neary and Damien Woods.
+\newblock Four small universal turing machines.
+\newblock {\em Theoretical Computer Science}, 410(50):5105--5118, 2009.
+
 \bibitem[Sie95]{SIE995}
 Hava~T Siegelmann.
 \newblock Computation beyond the turing limit.
