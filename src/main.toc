@@ -9,3 +9,5 @@
 \contentsline {paragraph}{Actual proof}{7}{section*.5}%
 \contentsline {paragraph}{Corollaries}{8}{section*.6}%
 \contentsline {subsection}{\numberline {2.2}Growing memory modules}{9}{subsection.2.2}%
+\contentsline {paragraph}{Actual proof}{10}{section*.7}%
+\contentsline {paragraph}{Corollary}{11}{section*.8}%

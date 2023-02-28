@@ -250,6 +250,52 @@ As a whole, $\rho$ will be computed similarly to how it was defined in the previ
 Similarly to the previous section, $\rho$ is injective, thus we can define the decoder function $\rho^{-1}:\rho(\mathcal{X}) \rightarrow \mathcal{X}$.
 
 \paragraph{Actual proof}
+Again, in the supplementary material we can find the full-detailed proof of the simulation of a Turing machine using an RNNs. We will only discuss succintly the key ideas behind the construction.
+
+First of all, we must define how $h(|s_j|)$ evolves during time, to understand which is the criterion that the RNNs uses to pop and push neurons in the stacks. In the case of $h(|s_L|)$, we have that:
+
+\begin{equation}
+    h(|s_L'|)=
+    \begin{cases}
+        h(|s_L|)-1 & \textrm{ if } d = L \textrm{ and } h(|s_L|) \geq 2\\
+        p & \textrm{ if } d = L \textrm{ and } h(|s_L|) = 1\\
+        h(|s_L|)+1 & \textrm{ if } d = R \textrm{ and } h(|s_L|) \leq p-1\\
+        1 & \textrm{ if } d = R \textrm{ and } h(|s_L|) = p\\
+    \end{cases}
+\end{equation}
+
+where $d$ is the direction in which the head is moving and $s_L'$ is the shifted tape. The idea is simple for the first and the third case (if we are moving left, we are consuming one symbol from the tape, if we are moving right we are adding one symbol to the tape), while can be a little less intuitive for the other two cases. If we are moving left and there is only one symbol left on the left tape ($h(|s_L|)=1$), we consume it and thus we have to pop a neuron from the stack. Consequently, we have a new set of $p$ symbols at our disposal in the neuron that encodes of the left tape. On the other hand, if we are moving right and we have $p$ symbols for the left tape in the RNN, we aren't able to add another symbol to the neuron, thus we have to push it to the left stack and start encoding the tape again with only the new symbol. Of course, $h(|s_R|)$ is defined analogously.
+
+Having defined how this quantity varies through execution, we can proceed by analyzing the structure of the RNN. The general idea follows the proof of theorem \ref{th:theorem1} (we have all the 6 categories of neurons again), but we need to add a few more neurons to keep track of the pushing and popping operations:
+
+\begin{enumerate}
+    \setcounter{enumi}{7}
+    \item Guard neurons, which will keep track of $h(|s_L|)$ and $h(|s_R|)$.
+    \item Buffer neurons, that are required to compute intermediate values for tape updates: when active (thus, not equal to $0$), they hold the values popped from the stacks.
+    \item Push-pop neurons $(u_L,o_L)$ and $(u_R,o_R)$ modify the memory modules, as described previously.
+\end{enumerate}
+
+The simulation is executed again during three main steps and the newly introduced neurons are evolve during the second stage. The nodes presented in the previous section are updated with an alternative version of the original equations, that take into consideration the external memory modules:
+
+\begin{itemize}
+    \item Tape neurons not only take into consideration temporary tapes, but also the values of the buffer neurons.
+    \item Similarly, readout neurons take into consideration also buffer neurons in the case a popping operation was executed.
+\end{itemize}
+
+At the end of the third step, the updated RNN's state encodes the configuration of the simulated Turing machine after the relative transition according to its $\delta$ function.
+
+For more details and the actual equations that descrive the dynamics of the system, please refer to the supplementary material of \cite{CHU21}.
+
+\paragraph{Corollary}
+As for the previous section, applying multiple times this result leads to the corollary we're mostly interested in: if $\mathcal{P}*_{M}$ is defined, then
+
+$$\rho^{-1}(\mathcal{T}^*_{W,b}(\rho(x))) = \mathcal{P}^*_{\mathcal{M}}(x)$$
+
+and $\mathcal{T}^*_{W,b}(\rho(x))$ is undefined otherwise.
+Furthermore, in analogy with the previous section, we can state that there exists a $54$-neuron $p$-precision RNN with two growing memory modules that can simulate any Turing Machine in $\mathcal{O}(T^6)$, where $p \geq 2$. Moreover, since growing memory modules represent the foundation form of stack-augmented RNNs, it's possible to simulate any latter RNN with the architecture described in the paper (the details of the proof are explained again in \cite{CHU21}), thus this proof can be extended to the class of stack-augmented recurrent neural networks.
+
+This proof shows a (technically) possible implementation of the actual RNN (assuming we have enough memory to run any Turing machine we want to emulate) which allows for fast manipulation of the data: although the simulation of a single transition requires three stages of computation in both constructions, the network with the growing memory module only requires updating the symbols near the head at each step, while the unbounded precision architecture needed to take into consideration all the tape.
+Unfortunately, as the authors explain in the conclusion, the RNN presented in this section is not trainable as of today, since the non-differentiability of the growing memory modules doesn't allow us exploit error backpropagation. Possible solutions would be to construct a differentiable version of the memory modules or to use a different learning rule to deal with the discrete pushing and popping operations.
 
 % Bibliography
 \clearpage
