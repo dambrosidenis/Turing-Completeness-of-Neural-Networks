@@ -1,4 +1,5 @@
-\begin{thebibliography}{Cyb89}
+\newcommand{\etalchar}[1]{$^{#1}$}
+\begin{thebibliography}{VSP{\etalchar{+}}17}
 
 \bibitem[CS21]{CHU21}
 Stephen Chung and Hava~T Siegelmann.
@@ -27,6 +28,11 @@ Turlough Neary and Damien Woods.
 \newblock Four small universal turing machines.
 \newblock {\em Theoretical Computer Science}, 410(50):5105--5118, 2009.
 
+\bibitem[PMB19]{PER19}
+Jorge Pérez, Javier Marinković, and Pablo Barceló.
+\newblock On the turing completeness of modern neural network architectures,
+  2019.
+
 \bibitem[Sie95]{SIE995}
 Hava~T Siegelmann.
 \newblock Computation beyond the turing limit.
@@ -43,5 +49,12 @@ Alan~M Turing.
   entscheidungsproblem.
 \newblock {\em Proceedings of the London Mathematical Society}, 2(1):230--265,
   1937.
+
+\bibitem[VSP{\etalchar{+}}17]{VAS17}
+Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones,
+  Aidan~N Gomez, Lukasz Kaiser, and Illia Polosukhin.
+\newblock Attention is all you need.
+\newblock In {\em Advances in Neural Information Processing Systems}, pages
+  5998--6008, 2017.
 
 \end{thebibliography}

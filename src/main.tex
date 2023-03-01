@@ -110,14 +110,16 @@ Taking a closer look to the types of connection within a network, we can discimi
 
 \section{Theoretical Turing completeness of RNNs}\label{sec:theoretical}
 
-In this section we will further investigate the expressive power of Recurrent Neural Networks without taking into consideration the actual realizability of the systems taken into consideration. This branch of research has been initially explored by Siegelmann and Sontag in 1995 \cite{SIE95}, when they presented a theoretical framework for understanding the computational power of neural networks, and in particular, their ability to simulate the behavior of Turing machines.
+In this section we will further investigate the expressive power of recurrent neural networks without taking into consideration the actual realizability of the systems taken into consideration. This branch of research has been initially explored by Siegelmann and Sontag in 1995 \cite{SIE95}, when they presented a theoretical framework for understanding the computational power of neural networks, and in particular, their ability to simulate the behavior of Turing machines.
 
 This result has significant implications for the field of artificial intelligence and computer science, as it shows that neural networks are not just powerful tools for solving specific problems, but can also serve as a universal computational substrate capable of performing any computation that can be performed by a Turing machine.
 
-Unfortunately, this result is not applicable to real-life recurrent architectures since we would require registers to have unlimited precision to store the content of the tape using rational numbers through a fractal encoding function.
-Still, in 2021 Chung and Siegelmann published another article \cite{CHU21} about the expressiveness of recurrent networks: this paper did not introduce any practical implications about the Turing completeness of these data structures but clarified some aspects about the previous proof from 1995 and partially solved the finite precision problem by introducing other caveauts. In the rest of this section we will take a brief look at the results provided by this article, as well as their issues.
+\subsection{Turing completeness of general RNNs}
 
-\subsection{Unbounded precision}
+Unfortunately, this result is not applicable to real-life recurrent architectures since we would require registers to have unlimited precision to store the content of the tape using rational numbers through a fractal encoding function.
+Still, in 2021 Chung and Siegelmann published another article \cite{CHU21} about the expressiveness of recurrent networks: this paper did not introduce any new practical implications about the Turing completeness of these data structures but clarified some aspects about the previous proof from 1995 and partially solved the finite precision problem by introducing other caveauts. In the rest of this section we will take a brief look at the results provided by this article, as well as their issues.
+
+\subsubsection{Unbounded precision}
 
 The first theorem presented in \cite{CHU21} contributes with only very few additional implications with respect to the proof from 1995 from a practical standpoint, but it provides a clearer explaination and a slighty faster (only a linear speedup) simulation; it states:
 
@@ -208,7 +210,7 @@ and $\mathcal{T}^*_{W,b}(\rho(x))$ is undefined otherwise.
 
 Furthermore, since Neary and Woods in 2009 introduced a $6$ states and $4$ symbols universal Turing machine \cite{NEA09}, we can state that there exists a $40$-neuron unbounded-precision RNN that can simulate any Turing machine in time $\mathcal{O}(T^6)$.
 
-\subsection{Growing memory modules}\label{sec:growingmodules}
+\subsubsection{Growing memory modules}\label{sec:growingmodules}
 The second addend within formula \ref{eq:fractal} allows to remove the unlimited precision requirement introduced in \cite{SIE95} to encode the infinite number of blank symbols on the tape, but the proof of theorem \ref{th:theorem1} still needs registers with unbounded precision, making any practical implementation impossible.
 
 In the article they also introduced the idea of a \textit{growing memory module}, that can be used as an external stack of neurons to store part of the tape of a Turing machine. The dynamics of this stack is controlled by two neurons called $u$ and $o$, which are responsible for the popping and the pushing operations. Keeping into consideration the notion of time already introduced to define the evolution of an RNN, we can describe the update of the stack as follows:
@@ -297,7 +299,7 @@ Furthermore, in analogy with the previous section, we can state that there exist
 This proof shows a (technically) possible implementation of the actual RNN (assuming we have enough memory to run any Turing machine we want to emulate) which allows for fast manipulation of the data: although the simulation of a single transition requires three stages of computation in both constructions, the network with the growing memory module only requires updating the symbols near the head at each step, while the unbounded precision architecture needed to take into consideration all the tape.
 Unfortunately, as the authors explain in the conclusion, the RNN presented in this section is not trainable as of today, since the non-differentiability of the growing memory modules doesn't allow us exploit error backpropagation. Possible solutions would be to construct a differentiable version of the memory modules or to use a different learning rule to deal with the discrete pushing and popping operations.
 
-\subsection{Unbounded neurons}
+\subsubsection{Unbounded neurons}
 Siegelmann and Chung's article presented in conclusion a third final theorem, which explored another (arguably even less implementable) path to obtain Turing completeness: having at disposal an unbounded number of neurons of finite precision in order to encode the tape of the machine. The authors state that this could be either achieved by having an illimitate number of neurons at the beginning of the simulation, or by increasing the numerosity of the nodes of the networks on the fly based on the states reached by the RNN during the computation. Although this result (explained in corollary 3.1 of the paper) has apparently limited practical implications (at least for now), the path that the authors undertook to state it produced some concrete conclusions about the topic: before generalizing to an unbounded network, they actually proved that any memory-bounded Turing machine can be simulated by an RNN of predetermined size. The theorem is stated as follows:
 
 \begin{theorem}\label{th:theorem3}
@@ -349,6 +351,44 @@ $$\rho^{-1}(\mathcal{T}^3_{W,b}(\rho(x))) = \mathcal{P}_{\mathcal{M}}(x)$$
 
 such that $\mathcal{T}^3_{W,b}(\rho(x))$ is defined if and only if $\mathcal{P}_{\mathcal{M}}(x)$ is defined.
 Consequently, by unbounding the number of neurons, we can simulate any possible Turing machine. Since we do not take into consideration the size of the network anymore, we can exploit the construction provided by Hennie and Stearns \cite{HEN66} to show that there exists an unbounded-neuron, bounded-precision RNN capable of simulating any Turing machine in time $\mathcal{O}(T \log T)$.
+
+\subsection{Turing completeness of modern architectures}
+
+Although the aim of this essay is to take into consideration the Turing completeness of general recurrent neural networks, we still wanted to present some interesting results about the expressiveness of more complex architectures that are currently used for real world tasks. In the remaining part of this section, we will briefly take a loot at the conclusions provided by \cite{PER19}.
+
+\subsubsection{Models based on attention}
+The Transformer is a neural network architecture that has revolutionized the field of natural language processing (NLP). It was first introduced in 2017 in a seminal paper titled "Attention is All You Need" by Vaswani et al. \cite{VAS17}, and has since become a widely used and highly influential architecture in NLP research.
+
+At its core, the Transformer architecture is designed to process variable-length sequences of data, such as sentences or paragraphs, and is based on the use of multi-headed self-attention mechanisms. These attention mechanisms allow the model to capture long-range dependencies between different parts of the input, which is essential for many NLP tasks.
+
+The Transformer architecture is composed of an encoder and a decoder. The encoder takes the input sequence and produces a sequence of hidden states, while the decoder takes the hidden states and produces the output sequence. Each layer of the Transformer is composed of two sub-layers: a multi-headed self-attention mechanism and a position-wise feedforward neural network. The self-attention mechanism allows the model to attend to different parts of the input sequence, while the feedforward network applies a non-linear transformation to each position independently.
+
+One of the key innovations of the Transformer architecture is the use of self-attention mechanisms. Traditional recurrent neural networks and convolutional neural networks (CNNs) have limited ability to capture long-range dependencies in input sequences, which can lead to performance degradation on tasks that require modeling such dependencies. The self-attention mechanism allows the Transformer to attend to all positions in the input sequence simultaneously and to capture dependencies between distant positions.
+
+The multi-headed self-attention mechanism in the Transformer allows the model to attend to multiple parts of the input sequence at once. This is achieved by splitting the input sequence into multiple heads, and applying self-attention to each head separately. This allows the model to capture multiple types of relationships between the input positions, and to weigh different relationships differently. Note that the last step of this mechanism requires the network to perform a convex combinations over embeddings with weights obtained through a softmax ($\sigma(x_i) = \frac{e^{x_i}}{\sum_{j=1}^{n} e^{x_j}}$) application.
+
+Another important feature of the Transformer architecture is the use of positional encodings. Since the self-attention mechanism in the Transformer does not take into account the order of the input sequence, positional encodings are added to the input embeddings to give the model information about the order of the input. This allows the Transformer to capture both positional and content information from the input sequence. In the introductory paper, these encodings were computed through $\sin$ and $\cos$ operations.
+
+The Transformer architecture has achieved state-of-the-art results on a range of benchmark NLP datasets, including machine translation, question answering, and language modeling. It has also been adapted and extended for use in other domains, such as computer vision and speech recognition. The success of the Transformer has led to a renewed focus on self-attention mechanisms and has spurred further research in the area of NLP and deep learning.
+
+Part of the wide success of this architecture is due to its non-recurrent nature, that allows for input vectorization and, thus, parallelized execution. This feature, although critical for speeding up the training procedure of various orders of magnitude with respect to classical sequence-to-sequence architectures (for example LSTMs or GRUs), makes real-world Transformers inherently not Turing-complete (the ability to loop is a required condition to simulate partial functions). In \cite{PER19}, the authors thus considered an alternative version of the original architecture in order to overcome this (and the following) issue:
+
+\begin{itemize}
+    \item The proof requires a system composed by one encoder and 3 decoders arranged sequentially. The output of the last component is then fed again as the input to the first in order to build a loop in the computation.
+    \item Since (analogously to \cite{SIE95}) in the paper they take into considerations only rational numbers of unbounded precision, they had to replace softmax attention with the hardmax function ($\sigma(x_i)=\frac{1}{m} \leftrightarrow x_i = \max(x)$, where $m$ is the number of maximal values within $x$) and the positional encodings with an alternative mapping that is explained in appendix B.4.2 of their supplementary material. 
+\end{itemize}
+
+We will now provide a brief overlook of their inductive proof: our objective is, given a Turing machine $\mathcal{M}$ and a configuration $x$, to use the system described above to simulate the transition of $\mathcal{M}$ to the following configuration.
+
+The encoder receives a string containing the encoding for a sequence of state/read symbol pairs $(q_i,s_i)$, which at first are mapped into a list of one-hot-encoded embeddings, and then increased through the addition with positional encondings. The output of this component is a tuple, which encodes information about the state in which the machine is and the symbol under the head. The construction uses an additional lemma to state that, given the required information, the transition function $\delta$ of a Turing machine $\mathcal{M}$ (in the form of $(q_t,s_t) \to (q_{t+1}, w_{t+1}, m_{t+1})$, where $q_{t+1}$ is the new state, $w_{t+1}$ is the symbol written by the head and $m_{t+1}$ is the shift on the tape) can be simulated with a 2-layer feed forward network. The decoder is also able to determine the index of the head of the machine at a point in time using a layer of attention (again, showed in an additional lemma) by calculating all the movements $m_t$ executed from the start of the simulation. We need a final information, computed through the second decoder: given the sequence of previous movements $m_t$ and writings $w_t$, the network is able to determine the most recent timestamp in which the head was in the same location using self-attention. Knowing the previous sequence of movements and writings, the last decoder is able to calculate $q_{i+1}$ (already available since the first decoder) and $s_{i+1}$ (computed by looking at the last symbol written in corrispondence to the cell to which we just moved). The output of the network is again a string containing the sequence of pairs $(q_1,s_1)...(q_{i+1},s_{i+1})$, that can be used to continue the simulation of the Turing machine.
+
+We encourage reading the supplementary material of \cite{PER19} to understand in detail the actual construction.
+
+\subsubsection{Models based on convolution}
+Convolutional Neural Networks (CNNs) are a type of artificial neural network that have revolutionized the field of computer vision. CNNs are specifically designed to process images and other types of grid-like data by using a process called convolution, which involves sliding a set of filters over the input data to extract features. Convolution is actually a mathematical operation that involves multiplying a small matrix of values, called a filter or kernel, with a portion of the input data and summing the results. By sliding the filter over the input data, the network can extract different features at different locations. The output of the convolutional layer is then fed into an activation function to introduce nonlinearity.
+
+CNNs have been successful in a wide range of computer vision tasks, including image classification, object detection, facial recognition, and semantic segmentation. In recent years, CNNs have also been used in other fields, such as natural language processing, where they have been adapted to process sequential data, such as text, through the use of recurrent neural networks and attention mechanisms. In particular, some existing RNN architectures have been enhanced with the convolution capabilities to combine feature-extracting with sequence prediction. One example of this union is the convolutional GRU (Gated Recurrent Unit), a recurrent network designed to process sequential data, such as time-series or video frames, by applying convolutions to capture spatial patterns and GRU units to capture temporal dependencies. The convolutional layers are used to extract features from the input data and the GRU units are used to capture the temporal dependencies between these features.
+
 
 
 % Bibliography
