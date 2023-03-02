@@ -17,4 +17,4 @@
 \contentsline {paragraph}{Corollaries}{14}{section*.10}%
 \contentsline {subsection}{\numberline {2.2}Turing completeness of modern architectures}{14}{subsection.2.2}%
 \contentsline {subsubsection}{\numberline {2.2.1}Models based on attention}{14}{subsubsection.2.2.1}%
-\contentsline {subsubsection}{\numberline {2.2.2}Models based on convolution}{16}{subsubsection.2.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.2}Models based on recurrent convolutions}{16}{subsubsection.2.2.2}%
