@@ -418,10 +418,55 @@ In the previous part of this essay, we took into consideration ideal networks th
 
 At a high level, an NTM consists of two main components: a neural network that is responsible for processing input data and producing output, and a memory bank that stores structured data in a way that can be accessed and manipulated by the network. The memory bank is usually implemented as a large, two-dimensional array of memory cells, with each cell storing a vector of data. The network can read from and write to the memory bank using one or more read and write heads, which move across the array and interact with the data stored in each cell.
 
-The external memory module is accessed at each timestamp through differentiable operations: 
+The external memory module is accessed both in writing and reading operations at every timestamp through differentiable operations: during each iteration $t$, a set of vectors $[k_t, \beta_t, g_t, s_t, \gamma_t]$ is output by the network controller.
+
+\begin{itemize}
+    \item The first two values are used for content-based addressing of the memory matrix: the \textit{content-adressing weighting} is computed as
+
+        \begin{equation}
+            w_t^c(i) = \frac{\exp(\beta_t K(k_t, M_t(i)))}{\sum_j \exp(\beta_t K(k_t, M_t(j)))}
+        \end{equation}
+
+    In the previous equation, we have that each row of the matrix ($M_t(i)$) is compared with the key $k_t$ with the cosine similarity ($K(u,v) = \frac{u \cdot v}{||u|| ||v||}$). This measure is then passed through the softmax function to determine a probabilistic distribution over the memory cells. Note the use of $\beta$: this parameter can be altered to change the concentration of the distribution in order to have more or less exclusive access to the locations of the external module.
+    \item $g_t$ is used to determine an interpolation between a weighting calculated during the previous timestamp and the freshly computed content-adressing weighting
+
+        \begin{equation}
+            w_t^g = g_t w_t^c + (1-g_t)w_{t-1}
+        \end{equation}
+
+    Note that, our objective will be to determine the current timestamp's weighting $w_t$ in order to define the memory accessing operations.
+
+    \item Finally, $s_t$ is a vector used to define shift weightings: a vector of probabilities that allows to determine the degree of left or right shifts in the read and write operations of the memory matrix. The size $k$ of the shift weighting vector $s_t$ determines the degree of shift that the controller can apply to the memory matrix. In practice, a temporary weighting is computed as
+    
+    \begin{equation}
+        \tilde{w}_t(i) = \sum_{j=0}^{N-1}w_t^g(j)s_t(i-j)
+    \end{equation}
+
+    where all index arithmetic is calculated modulo $N$, which is the number of locations in the memory matrix. In conclusion, the final weighting is calculated as a probability distribution through the use of a softmax application:
+
+    \begin{equation}
+        w_t(i) = \frac{\tilde{w}_t(i)^{\gamma_t}}{\sum_j \tilde{w}_t(j)^{\gamma_t}}
+    \end{equation}
+    
+    Note that the transformation applied could be slighty "blurry" over the locations. To overcome this, the scalar $\gamma_t$ can be used to sharpen the final weighting (analogously to $\beta_t$ in the previous point).
+\end{itemize}
+
+This weighting is then used both in reading and writing: the output of the system is given by a convex combination of the rows in memory weighted by $w_t$
+
+\begin{equation}
+    r_t = \sum_i w_t(i)M_t(i)
+\end{equation}
+
+while the update of the matrix is just a generalization of the \textbf{LSTM}'s long-term-memory update mechanism:
+
+\begin{align}
+    \tilde{M}_t(i) &= M_{t-1}(\mathbf{1}-w_t(i) e_t)\\
+    M_t(i) &= \tilde{M}_t(i) + w_t(i) a_t
+\end{align}
+
+where $e_t$ and $a_t$ are the \textit{erase} and \textit{add vector}output by the controller.
 
 One of the key advantages of NTMs is that they can learn to store and retrieve information over multiple steps, allowing them to perform tasks that require access to structured, external data. For example, an NTM can be trained to perform handwriting recognition by receiving a sequence of input images representing a handwritten word, and then storing the sequence of images in memory. The network can then use the read and write heads to access the stored images and generate a transcription of the word.
-
 
 \subsection{The Differentiable Neural Computer}
 
