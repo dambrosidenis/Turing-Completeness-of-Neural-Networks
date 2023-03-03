@@ -18,3 +18,7 @@
 \contentsline {subsection}{\numberline {2.2}Turing completeness of modern architectures}{14}{subsection.2.2}%
 \contentsline {subsubsection}{\numberline {2.2.1}Models based on attention}{14}{subsubsection.2.2.1}%
 \contentsline {subsubsection}{\numberline {2.2.2}Models based on recurrent convolutions}{16}{subsubsection.2.2.2}%
+\contentsline {paragraph}{Proof sketch}{18}{section*.11}%
+\contentsline {section}{\numberline {3}Practical implementations of Turing-(almost)-complete networks}{19}{section.3}%
+\contentsline {subsection}{\numberline {3.1}The Neural Turing Machine}{19}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}The Differentiable Neural Computer}{19}{subsection.3.2}%

@@ -1,5 +1,5 @@
 \newcommand{\etalchar}[1]{$^{#1}$}
-\begin{thebibliography}{VSP{\etalchar{+}}17}
+\begin{thebibliography}{GWR{\etalchar{+}}16}
 
 \bibitem[Coo04]{COO04}
 Matthew Cook.
@@ -17,6 +17,19 @@ George Cybenko.
 \newblock Approximation by superpositions of a sigmoidal function.
 \newblock {\em Mathematics of Control, Signals, and Systems}, 2(4):303--314,
   1989.
+
+\bibitem[GWD14]{GRA14}
+Alex Graves, Greg Wayne, and Ivo Danihelka.
+\newblock Neural turing machines.
+\newblock In {\em Advances in Neural Information Processing Systems}, pages
+  2621--2629, 2014.
+
+\bibitem[GWR{\etalchar{+}}16]{GRA16}
+Alex Graves, Greg Wayne, Malcolm Reynolds, Tim Harley, Ivo Danihelka, Agnieszka
+  Grabska-Barwińska, Sergio~Gomez Colmenarejo, Edward Grefenstette, Tiago
+  Ramalho, John Agapiou, et~al.
+\newblock Hybrid computing using a neural network with dynamic external memory.
+\newblock {\em Nature}, 538(7626):471--476, 2016.
 
 \bibitem[HS66]{HEN66}
 Frederick~C Hennie and Richard~E Stearns.
@@ -41,6 +54,12 @@ Turlough Neary and Damien Woods.
 Jorge Pérez, Javier Marinković, and Pablo Barceló.
 \newblock On the turing completeness of modern neural network architectures,
   2019.
+
+\bibitem[Pol87]{POL87}
+James~B Pollack.
+\newblock {\em On Connectionist Models of Natural Language Processing}.
+\newblock PhD thesis, Computer Science Department, University of Illinois,
+  Urbana, 1987.
 
 \bibitem[Sie95]{SIE995}
 Hava~T Siegelmann.
