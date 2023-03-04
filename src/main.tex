@@ -25,7 +25,7 @@
 \maketitle
 
 \begin{abstract}
-    Neural networks are a powerful machine learning technique that can be applied to a variety of applications, from image classification to natural language processing. At a basic level, neural networks consist of interconnected nodes that transmit and locally process data, but this seamingly simple architecture allows for an impressive degree of adaptability. Since nowadays they are broadly used to solve virtually any form of task, we must question they actual expressive power: are they actually Turing complete?
+    Neural networks are a powerful machine learning technique that can be applied to a variety of applications, from image classification to natural language processing. At a basic level, neural networks consist of interconnected nodes that transmit and locally process data, but this seamingly simple architecture allows for an impressive degree of adaptability. Since nowadays they are broadly used to solve virtually any form of task, we must question their actual expressive power: are they actually Turing complete?
     In this paper, we will examine neural networks' Turing completeness and how it affects how they can be used for computation.
 \end{abstract}
 
@@ -82,7 +82,7 @@ The instantaneous description of a Turing machine is important because it allows
 
 \subsection{Neural Networks}
 
-Neural networks are a class of machine learning models that are designed to learn and recognize patterns in data. At their core, neural networks are composed of a large number of interconnected processing nodes, which are designed to simulate the behavior of neurons in the brain. As computer scientists, we are able to execute sophisticated computations on input data by connecting these nodes into intricate, layered structures, enabling the data structures themselves to deduce intricate patterns in the information provides and forecast future predictions on unseen examples.
+Neural networks are a class of machine learning models that are designed to learn and recognize patterns in data. At their core, neural networks are composed of a large number of interconnected processing nodes, which are designed to simulate the behavior of neurons in the brain. As computer scientists, we are able to execute sophisticated computations on input data by connecting these nodes into intricate, layered structures, enabling the data structures themselves to deduce intricate patterns in the information provided and forecast future predictions on unseen examples.
 
 At the most basic level, a node in a neural network is a mathematical function that takes one or more inputs and produces a single scalar output. Each node is connected to one or more other nodes, composing a network of interconnected processing elements. The computed output of one node serves as the input to the next (that may be just one or multiple ones), allowing information to flow in a predetermined way through the network itself and be processed at each step.
 
@@ -100,7 +100,7 @@ The weights in the net function are learned through a process called training, w
 
 It is also important to keep in mind that at least one of the three composed functions (generally the activation) needs to introduce non-linearity to the system: otherwise, the network would be limited to performing linear transformations on the input data, which would severely limit its expressiveness.
 
-Taking a closer look to the types of connection within a network, we can disciminate between two main kinds of architectures:
+Taking a closer look to the types of connection within a network, we can discriminate between two main kinds of architectures:
 
 \begin{itemize}
     \item \textbf{Feedforward Neural Networks} (FFNNs) are networks that have a single flow of input, where the data is processed from the input layer through one or more hidden layers to the output layer. In FFNNs, the information flows in one direction, from the input to the output layer, with no feedback connections: the output of one layer serves as the input for the next layer.
@@ -221,7 +221,7 @@ In the article they also introduced the idea of a \textit{growing memory module}
     \item if $o(t) = 0$ and the stack is empty, then $o(t+1) = c$ where $c$ is a default value.
 \end{itemize}
 
-We can define an RNN with two growing memory modules (following the key idea of simulating a Turing machine with a 2-stack pushdown atomata) as a mapping $\mathcal{T}_{W,b}:(\mathbb{Q}^N,\mathbb{Q}^*,\mathbb{Q}^*) \rightarrow (\mathbb{Q}^N,\mathbb{Q}^*,\mathbb{Q}^*)$.
+We can define an RNN with two growing memory modules (following the key idea of simulating a Turing machine with a 2-stack pushdown automata) as a mapping $\mathcal{T}_{W,b}:(\mathbb{Q}^N,\mathbb{Q}^*,\mathbb{Q}^*) \rightarrow (\mathbb{Q}^N,\mathbb{Q}^*,\mathbb{Q}^*)$.
 
 The following result, presented in the article, aims at removing the unbounded precision requirement previously introduced with theorem \ref{th:theorem1}:
 
@@ -286,7 +286,7 @@ The simulation is executed again during three main steps and the newly introduce
 
 At the end of the third step, the updated RNN's state encodes the configuration of the simulated Turing machine after the relative transition according to its $\delta$ function.
 
-For more details and the actual equations that descrive the dynamics of the system, please refer to the supplementary material of \cite{CHU21}.
+For more details and the actual equations that describe the dynamics of the system, please refer to the supplementary material of \cite{CHU21}.
 
 \paragraph{Corollary}
 As for the previous section, applying multiple times this result leads to the corollary we are mostly interested in: if $\mathcal{P}*_{M}$ is defined, then
@@ -359,7 +359,7 @@ To conclude this section, we would like to emphasize a small but important detai
 Although the aim of this essay is to take into consideration the Turing completeness of general recurrent neural networks, we still wanted to present some interesting results about the expressiveness of more complex architectures that are currently used for real world tasks. In the remaining part of this section, we will briefly take a loot at the conclusions provided by \cite{PER19}.
 
 \subsubsection{Models based on attention}
-The \textbf{Transformer} is a neural network architecture that has revolutionized the field of natural language processing (NLP). It was first introduced in 2017 in a seminal paper titled "Attention is All You Need" by Vaswani et al. \cite{VAS17}, and has since become a widely used and highly influential architecture in NLP research.
+The \textbf{Transformer} is a neural network architecture that has revolutionized the field of natural language processing (NLP). It was first introduced in 2017 in a ground-breaking paper titled "Attention is All You Need" by Vaswani et al. \cite{VAS17}, and has since become a widely used and highly influential architecture in NLP research.
 
 At its core, the Transformer architecture is designed to process variable-length sequences of data, such as sentences or paragraphs, and is based on the use of multi-headed self-attention mechanisms. These attention mechanisms allow the model to capture long-range dependencies between different parts of the input, which is essential for many NLP tasks.
 
@@ -367,7 +367,7 @@ The Transformer architecture is composed of an encoder and a decoder. The encode
 
 One of the key innovations of the Transformer architecture is the use of self-attention mechanisms. Traditional recurrent neural networks and convolutional neural networks (CNNs) have limited ability to capture long-range dependencies in input sequences, which can lead to performance degradation on tasks that require modeling such dependencies. The self-attention mechanism allows the Transformer to attend to all positions in the input sequence simultaneously and to capture dependencies between distant positions.
 
-The multi-headed self-attention mechanism in the Transformer allows the model to attend to multiple parts of the input sequence at once. This is achieved by splitting the input sequence into multiple heads, and applying self-attention to each head separately. This allows the model to capture multiple types of relationships between the input positions, and to weigh different relationships differently. Note that the last step of this mechanism requires the network to perform a convex combinations over embeddings with weights obtained through a softmax ($\sigma(x_i) = \frac{e^{x_i}}{\sum_{j=1}^{n} e^{x_j}}$) application.
+The multi-headed self-attention mechanism in the Transformer allows the model to attend to multiple parts of the input sequence at once. This is achieved by splitting the input sequence into multiple heads, and applying self-attention to each head separately. This allows the model to capture multiple types of relationships between the input positions, and to weigh different relationships indipendently. Note that the last step of this mechanism requires the network to perform a convex combinations over embeddings with weights obtained through a softmax ($\sigma(x_i) = \frac{e^{x_i}}{\sum_{j=1}^{n} e^{x_j}}$) application.
 
 Another important feature of the Transformer architecture is the use of positional encodings. Since the self-attention mechanism in the Transformer does not take into account the order of the input sequence, positional encodings are added to the input embeddings to give the model information about the order of the input. This allows the Transformer to capture both positional and content information from the input sequence. In the introductory paper, these encodings were computed through $\sin$ and $\cos$ operations.
 
@@ -382,7 +382,7 @@ Part of the wide success of this architecture is due to its non-recurrent nature
 
 We will now provide a brief overlook of their inductive proof: our objective is, given a Turing machine $\mathcal{M}$ and a configuration $x$, to use the system described above to simulate the transition of $\mathcal{M}$ to the following configuration.
 
-The encoder receives a string containing the encoding for a sequence of state/read symbol pairs $(q_i,s_i)$, which at first are mapped into a list of one-hot-encoded embeddings, and then increased through the addition with positional encondings. The output of this component is a tuple, which encodes information about the state in which the machine is and the symbol under the head. The construction uses an additional lemma to state that, given the required information, the transition function $\delta$ of a Turing machine $\mathcal{M}$ (in the form of $(q_t,s_t) \to (q_{t+1}, w_{t+1}, m_{t+1})$, where $q_{t+1}$ is the new state, $w_{t+1}$ is the symbol written by the head and $m_{t+1}$ is the shift on the tape) can be simulated with a 2-layer feed forward network. The decoder is also able to determine the index of the head of the machine at a point in time using a layer of attention (again, showed in an additional lemma) by calculating all the movements $m_t$ executed from the start of the simulation. We need a final information, computed through the second decoder: given the sequence of previous movements $m_t$ and writings $w_t$, the network is able to determine the most recent timestamp in which the head was in the same location using self-attention. Knowing the previous sequence of movements and writings, the third decoder is able to calculate $q_{i+1}$ (already available since the first decoder) and $s_{i+1}$ (computed by looking at the last symbol written in corrispondence to the cell to which we just moved). The output of the network is again a string containing the sequence of pairs $(q_1,s_1)...(q_{i+1},s_{i+1})$, that can be used to continue the simulation of the Turing machine.
+The encoder receives a string containing the encoding for a sequence of state/read symbol pairs $(q_i,s_i)$, which at first are mapped into a list of one-hot-encoded embeddings, and then increased through the addition with positional encodings. The output of this component is a tuple, which encodes information about the state in which the machine is and the symbol under the head. The construction uses an additional lemma to state that, given the required information, the transition function $\delta$ of a Turing machine $\mathcal{M}$ (in the form of $(q_t,s_t) \to (q_{t+1}, w_{t+1}, m_{t+1})$, where $q_{t+1}$ is the new state, $w_{t+1}$ is the symbol written by the head and $m_{t+1}$ is the shift on the tape) can be simulated with a 2-layer feed forward network. The decoder is also able to determine the index of the head of the machine at a point in time using a layer of attention (again, showed in an additional lemma) by calculating all the movements $m_t$ executed from the start of the simulation. We need a final information, computed through the second decoder: given the sequence of previous movements $m_t$ and writings $w_t$, the network is able to determine the most recent timestamp in which the head was in the same location using self-attention. Knowing the previous sequence of movements and writings, the third decoder is able to calculate $q_{i+1}$ (already available since the first decoder) and $s_{i+1}$ (computed by looking at the last symbol written in corrispondence to the cell to which we just moved). The output of the network is again a string containing the sequence of pairs $(q_1,s_1)...(q_{i+1},s_{i+1})$, that can be used to continue the simulation of the Turing machine.
 
 We encourage reading the supplementary material of \cite{PER19} to understand in detail the actual construction.
 
@@ -397,7 +397,7 @@ The expressive power of Neural GPUs is actually analyzed in the main article of 
 
 \paragraph{Proof sketch}
 
-Before discussing an overview of the actuall proof, it is important to note that the CGRU, during the update of its internal state, uses a bias vector of size directly proportional to the one of the input sequence, thus the Neural GPU can not be considered a fixed architecture. To solve this issue, the authors introduced the idea of a \textit{uniform} Neural GPU, that is an analogous network such that for each bias $\mathbf{B} \in \mathbb{Q}^{n \times w \times d}$ there exists a matrix $B \in \mathbb{Q}^{w \times d}$ such that we have that $\mathbf{B}_i = B\ \forall i \in {1..n}$. With this additional requirement we obtain a class of architectures that can be finitely specified (the number of parameters is constant, without depending on the length of the input).
+Before discussing an overview of the actual proof, it is important to note that the CGRU, during the update of its internal state, uses a bias vector of size directly proportional to the one of the input sequence, thus the Neural GPU can not be considered a fixed architecture. To solve this issue, the authors introduced the idea of a \textit{uniform} Neural GPU, that is an analogous network such that for each bias $\mathbf{B} \in \mathbb{Q}^{n \times w \times d}$ there exists a matrix $B \in \mathbb{Q}^{w \times d}$ such that we have that $\mathbf{B}_i = B\ \forall i \in {1..n}$. With this additional requirement we obtain a class of architectures that can be finitely specified (the number of parameters is constant, without depending on the length of the input).
 
 The reduction of RNNs to Neural GPUs is quite long and cumbersome, but can be summarized as follows: given a encoder-decoder RNN (for language recognition) $N$, we simulate its execution through an ad-hoc constructed uniform Neural GPU, which multi-dimensional state is used for simulating the evolution of both the encoder and the decoder. To obtain the emulated state of these components at a timestamp $t$ it's sufficient to project the Neural GPU's state $\mathbf{S}$ onto the $t^{\textrm{th}}$ dimension: if the internal size of $N$ is $d$, then the encoder state is defined as $\mathbf{E}_t = \mathbf{S}_{t,1,1:d}$, while the decoder's is $\mathbf{D}_t = \mathbf{S}_{t,1,d+1:2d}$ (using Python's standard slicing notation). By using convolutional kernels that space above multiple dimensions we can update $\mathbf{E}_t$ and $\mathbf{D}_t$ through multiple CGRUs: at each timestamp $t$ $\mathbf{E}_t$ is updated, while $\mathbf{E}_{t-1}$ is reset to $0$ using the relevant memory gate. On the other hand, vectors in $\mathbf{D}$ are never reset, thus they can keep being updated, which allows us to simulate an arbitrary long computation. The proof provided in the article shows that the architecture constructed allows to simulate $N$ since, at each timestamp $t$, $\mathbf{E}_t$ equals to the output of the encoder, while $\mathbf{D}_t$ is equivalent to the output of the decoder. While this simulation seems at first pretty straightforward, the construction of the actual kernels used, along with the actual proof of correctness of the emulation is quite long with a not-so-intuitive use of notation.
 
@@ -408,7 +408,7 @@ This proof (sketch) demonstrates that uniform Neural GPUs are capable of simulat
     \item The kernels used in the proof are of shape $(2,1,d,d)$. These are the smallest kernels possible to achieve Turing completeness, since, with filters of shape $(1,1,d,d)$, the value of a cell of $\mathbf{S}_t$ would only depend by the value of the same cell in $\mathbf{S}_{t-1}$.
 \end{itemize}
 
-\section{Practical implementations of Turing-(almost)-complete networks}
+\section{Practical implementations of Turing-complete networks}
 
 In the previous part of this essay, we took into consideration ideal networks that were able to achieve Turing completeness through the use of unbounded precision or non-differentiable operations. To partially solve this problem, Google researchers published in 2014 an article \cite{GRA14} that introduced a new perspective to the topic: instead of focusing on theoretical, but impractical universality, they tried to engineer a system able to simulate any memory-bound Turing machine. In the following part of this section, we will briefly discuss about the key concepts of this architecture, along with its later improved version, the \textbf{Differentiable Neural Computer} \cite{GRA16}.
 
@@ -464,7 +464,7 @@ while the update of the matrix is just a generalization of the \textbf{LSTM}'s l
     M_t[i] &= \tilde{M}_t[i] + w_t[i] a_t
 \end{align}
 
-where $e_t$ and $a_t$ are the \textit{erase} and \textit{add vector}output by the controller.
+where $e_t$ and $a_t$ are the \textit{erase} and \textit{add vector} output by the controller.
 
 One of the key advantages of NTMs is that they can learn to store and retrieve information over multiple steps, allowing them to perform tasks that require access to structured, external data. For example, an NTM can be trained to perform handwriting recognition by receiving a sequence of input images representing a handwritten word, and then storing the sequence of images in memory. The network can then use the read and write heads to access the stored images and generate a transcription of the word.
 
@@ -503,7 +503,7 @@ where $\circ$ is the pointwise multiplication, $E$ is a matrix of ones of the sa
         a_t[\phi_t[j]] = (1-u_t[\phi_t[j]]) \prod_{i=1}^{j-1} u_t[\phi_t[i]]
     \end{equation}
 
-    It's easy to convince ourselves that this vector can be used a continuous version of the free-list allocation scheme: if there exists an address $l$ that represents a particularly allocable memory location, its usage will be low (thus $l=\phi[1]$ and $1-u_t[\phi_t[1]] \approx 1$) and the product will be empty, so $a_t[\phi_t[1]] \approx 1$. Even if there are other locations with a low usage, their allocability will be low since $u_t[\phi_t[1]] \approx 0$ will appear in the product. As a consequence, there will be at most one location with high allocability, while the rest of the vector will only contain small values: by calculating an outer product between this tensor an a write vector we will practically access only the allocable location, leaving all the others almost unmodified.
+    It's easy to convince ourselves that this vector can be used a continuous version of the free-list allocation scheme: if there exists an address $l$ that represents a particularly allocable memory location, its usage will be low (thus $l=\phi[1]$ and $1-u_t[\phi_t[1]] \approx 1$) and the product will be empty, so $a_t[\phi_t[1]] \approx 1$. Even if there are other locations with a low usage, their allocability will be low since $u_t[\phi_t[1]] \approx 0$ will appear in the product. As a consequence, there will be at most one location with high allocability, while the rest of the vector will only contain small values: by calculating an outer product between this tensor and a write vector we will practically access only the allocable location, leaving all the others almost unmodified.
 \end{enumerate}
 
 The network decides which of these two mechanism should be used by interpolating $a_t$ with a content-based weighting $c_t^w$:
@@ -533,7 +533,7 @@ Similarly, memory can be addressed in two main modes in reading mode:
         L_t[i,j] &= (1-w_t^w[i]-w_t^w[j])L_{t-1}[i,j]+w_t^w[i]p_{t-1}[j]
     \end{align}
 
-    We want to highlights a few things: first of all, $L_0$ only contains null values because there is no actual writing to keep track of. Secondly, the elements in the main diagonal are zeros because it's unclear how to follow the link from a location to itself. Finally, a cell is updated only in the case that at least one of its coordinates is being currently written to and the update is proportional to both the current and the last writing intensities. 
+    We want to highlight a few things: first of all, $L_0$ only contains null values because there is no actual writing to keep track of. Secondly, the elements in the main diagonal are zeros because it's unclear how to follow the link from a location to itself. Finally, a cell is updated only in the case that at least one of its coordinates is being currently written to and the update is proportional to both the current and the last writing intensities. 
 
     Having computed $L_t$, we can compute the \textit{forward} and \textit{backward weightings} $f_t^i$ and $b_t^i$ for each read head $i$ by multiplying $L_t$ (or its transpose) by the previous read weighting $w_{t-1}^{r,i}$:
 
