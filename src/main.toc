@@ -22,3 +22,4 @@
 \contentsline {section}{\numberline {3}Practical implementations of Turing-(almost)-complete networks}{19}{section.3}%
 \contentsline {subsection}{\numberline {3.1}The Neural Turing Machine}{19}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}The Differentiable Neural Computer}{21}{subsection.3.2}%
+\contentsline {section}{\numberline {4}Conclusions}{24}{section.4}%
