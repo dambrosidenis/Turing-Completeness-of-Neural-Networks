@@ -468,7 +468,11 @@ where $e_t$ and $a_t$ are the \textit{erase} and \textit{add vector}output by th
 
 One of the key advantages of NTMs is that they can learn to store and retrieve information over multiple steps, allowing them to perform tasks that require access to structured, external data. For example, an NTM can be trained to perform handwriting recognition by receiving a sequence of input images representing a handwritten word, and then storing the sequence of images in memory. The network can then use the read and write heads to access the stored images and generate a transcription of the word.
 
+Although the Neural Turing Machine represented a huge step ahead in the research field of memory-augmented networks, its capabilities are limited by its basic memory accessing operations: as the network iterates through consecutive locations, sequential information is preserved during reading. However, once the write head jumps to a different part of the memory using content addressing, the read head cannot recover the order of writes that occurred before and after the jump. In addition, the NTM lacks a mechanism to guarantee that allocated memory blocks do not overlap and cause interference. Lastly, this architecture does not provide an access method for freeing previously written locations and, as a result, cannot reuse memory when processing extended sequences..
+
 \subsection{The Differentiable Neural Computer}
+
+To overcome the above issues, in 2016 the same team of the previous article published \cite{GRA16}, where they introduced an extended version of the NTM capable of better exploiting differentiable memory accessing methods to further generalize its learning capabilities. This new architecture was called the Differentiable Neural Computer (DNC) and inherited many ideas from its previous iteration, first of all the separated controller-memory bank structure. Again, in DNCs a neural network is used to compute from the input sequence a set of tensors (called the \textit{interface vector}) that are used to access the external module through (mostly) differentiable operations. In addition to the interface vector, the controller also computes a raw output tensor that is merged with the data retrieved from the memory at the same timestamp to produce the final network output.
 
 % Bibliography
 \clearpage
