@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.7.15)  7 MAR 2023 15:55
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.7.15)  7 MAR 2023 16:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -386,16 +386,13 @@ Underfull \hbox (badness 1701) in paragraph at lines 28--33
 [26
 
 ]) [27] (./main.aux)
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: B6180D00A816F9B1333CC19F4D07E972;2975.
  ) 
 Here is how much of TeX's memory you used:
  10052 strings out of 478268
  153806 string characters out of 5846347
- 447841 words of memory out of 5000000
+ 447842 words of memory out of 5000000
  27997 multiletter control sequences out of 15000+600000
  481760 words of font info for 75 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
