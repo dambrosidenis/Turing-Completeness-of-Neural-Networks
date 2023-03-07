@@ -1,11 +1,11 @@
 \contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
 \contentsline {subsection}{\numberline {1.1}Turing Machines}{2}{subsection.1.1}%
-\contentsline {subsection}{\numberline {1.2}Neural Networks}{3}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.2}Neural Networks}{4}{subsection.1.2}%
 \contentsline {section}{\numberline {2}Theoretical Turing completeness of RNNs}{5}{section.2}%
 \contentsline {subsection}{\numberline {2.1}Turing completeness of general RNNs}{5}{subsection.2.1}%
 \contentsline {subsubsection}{\numberline {2.1.1}Unbounded precision}{5}{subsubsection.2.1.1}%
 \contentsline {paragraph}{$\rho $}{6}{section*.2}%
-\contentsline {paragraph}{$\mathcal {P}_{\mathcal {M}}(x)$}{6}{section*.3}%
+\contentsline {paragraph}{$\mathcal {P}_{\mathcal {M}}(x)$}{7}{section*.3}%
 \contentsline {paragraph}{$\mathcal {T}_{W,b}^3$}{7}{section*.4}%
 \contentsline {paragraph}{Actual proof}{7}{section*.5}%
 \contentsline {paragraph}{Corollaries}{8}{section*.6}%
