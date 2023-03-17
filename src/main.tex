@@ -60,8 +60,8 @@ where:
     \item $\Gamma$ is a finite set of tape symbols, which includes the blank symbol $\#$.
     \item $\delta$ is a transition function that maps $Q \times \Gamma \rightarrow Q \times \Gamma \times \{L, R\}$, where $L$ and $R$ represent moving the head left or right on the tape.
     \item $q_0 \in Q$ is the initial state.
-    \item $q_{\mathrm{accept}} \in Q$ is the accepting state.
-    \item $q_{\mathrm{reject}} \in Q$ is the rejecting state.
+    \item $q_{\mathrm{accept}}$ is the accepting state.
+    \item $q_{\mathrm{reject}}$ is the rejecting state.
 \end{itemize}
 
 Before continuing, it is best that we also define the concept of istantaneous description of a Turing machine, since it will represent the starting (and ending) point of a simulation cycle by the neural networks that will be constructed.
@@ -135,8 +135,8 @@ Let's dissect this statement.
 The construction of $\rho$ is provided earlier in the article: it includes a version of the fractal encoding function already introduced in \cite{SIE95}, that allows us to save an instant configuration into a vector of size $2|\Gamma|+\lceil \log_2|Q|\rceil |Q||\Gamma| + 5$ of rational numbers. $\rho$ concatenates the encodings of the state, the left tape, the right tape and the first symbols to the sides of the head (even if it is actually explained that these last two informations are not strictly necessary). We still need to define the encoding functions for the state, the tapes and the symbols, but before we need to note that for this construction to work properly we must encode the symbol alphabet $\Gamma$ into a set of odd numbers.
 
 \begin{itemize}
-    \item $\rho^{(q)}: Q \rightarrow \{0,1\}^{\lceil \log_2 Q \rceil}$ maps the states into a binary enumeration (for example, assuming we have $Q=\{q_0,q_1,q_2\}$, we can define a state encoding as $\rho^{(q)}(q_0)=[0,0],\ \rho^{(q_1)}(q_0)=[0,1],\ \rho^{(q_2)}(q_0)=[1,0]$)
-    \item $\rho^{(s)}: \Gamma* \to \mathbb{Q}$ is used to encode the left and right tape using the following fractal encoding function:
+    \item $\rho^{(q)}: Q \rightarrow \{0,1\}^{\lceil \log_2 Q \rceil}$ maps the states into a binary enumeration (for example, assuming we have $Q=\{q_0,q_1,q_2\}$, we can define a state encoding as $\rho^{(q)}(q_0)=[0,0],\ \rho^{(q)}(q_1)=[0,1],\ \rho^{(q)}(q_2)=[1,0]$)
+    \item $\rho^{(s)}: \Gamma^* \to \mathbb{Q}$ is used to encode the left and right tape using the following fractal encoding function:
 
         \begin{equation}\label{eq:fractal}
             \rho^{(s)}(y) := \left(\sum_{i=1}^{|y|} \frac{y_{(i)}}{{(2|\Gamma|)^i}}\right) + \frac{1}{(2|\Gamma|)^{|y|}(2|\Gamma|-1)}
@@ -159,11 +159,11 @@ Finally, note that $\rho$ is injective, thus we can define an inverse function $
 \paragraph{$\mathcal{T}_{W,b}^3$} The simulation of one step the Turing machine $\mathcal{M}$ requires $3$ cycles of computation by the RNN $\mathcal{T}_{W,b}$, which we consider already trained on with weights $W$ and biases $b$. We need to note that, within this paper, we consider a single computation of the RNN as an affine transformation of the values of the previous state (thus the implicit introduction of time) followed by the linear saturated activation function $\sigma$:
 
     \begin{equation}
-        \sigma(x)=
+        \sigma(z)=
             \begin{cases}
-                0 & \text{if} x < 0\\
-                x & \text{if} 0 \leq x \leq 1\\
-                1 & \text{if} x > 1
+                0 & \text{if } z < 0\\
+                z & \text{if } 0 \leq x \leq 1\\
+                1 & \text{if } z > 1
             \end{cases} 
     \end{equation}
 
@@ -173,7 +173,7 @@ In practice, given a state $x(t)$ at time $t$, the following state $x(t+1)$ will
         x(t+1) = \sigma(Wx(t) + b)
     \end{equation}
 
-It is interesting to notice that, with this definition, we apparently do not have any inputs nor outputs, only relations between internal states. This is not a problem since we assume to be able to access and modify the internal representation of the network by keeping track of the activations of the neurons: before the first step of the computation we need to encode a valid configuration $x$ into the neurons of $\mathcal{T}_{W,b}$ by applying $\rho$ to $x$ and then assigning its coordinates to different neurons according to their function. A more precise explaination will be provided shortly, but, before continuing, we wanted to also note that this proof can be easily expanded to standard input/output RNNs by applying the construction provided by section 4.4 of \cite{SIE95}, which showed the equivalence between these two classes of networks. Finally, we can appreciate now how recurrence is crucial in order to obtain Turing completeness: without this ingredient, we would only have a finite amount of steps to calculate the transitions between configurations. We are thus able to conclude that feed forward neural networks can, at most, simulate time-bounded Turing machines.
+It is interesting to notice that, with this definition, we apparently do not have any inputs nor outputs, only relations between internal states. This is not a problem since we assume to be able to access and modify the internal representation of the network by keeping track of the activations of the neurons: before the first step of the computation we need to encode a valid configuration $x$ into the neurons of $\mathcal{T}_{W,b}$ by applying $\rho$ to $x$ and then assigning its coordinates to different neurons according to their function. A more precise explanation will be provided shortly, but, before continuing, we wanted to also note that this proof can be easily expanded to standard input/output RNNs by applying the construction provided by section 4.4 of \cite{SIE95}, which showed the equivalence between these two classes of networks. Finally, we can appreciate now how recurrence is crucial in order to obtain Turing completeness: without this ingredient, we would only have a finite amount of steps to calculate the transitions between configurations. We are thus able to conclude that feed forward neural networks can, at most, simulate time-bounded Turing machines.
 
 \paragraph{Actual proof}
 The article provides a full-detailed proof within its supplementary material, but for the sake of briefness we will now only highlight its key concepts.
@@ -194,7 +194,7 @@ As previously said, we need to initialise these neurons with different coordinat
 \begin{enumerate}
     \item In the first step, entry neurons, which are initialized with $\mathbf{0}$ compute the state-symbol combination in order to determine the next transition according to $\mathcal{M}$'s $\delta$.
     \item In the second step, state neurons and temporary tape neurons are updated according to the transition determined in the previous stage. Note that temporary tape neurons server as a buffer for tape neurons when shifting the tape
-    \item In the third stage, tape neurons are updated with the temporary neurons values
+    \item In the third stage, tape neurons are updated with the temporary neurons' values
 \end{enumerate}
 
 Note that readout and stage neurons are never quoted in this summary since are "used" multiple times. Stage neurons inhibit the update in neurons during the wrong timestamps (for example, we want tape neurons to remain unchanged during the first two steps) by subtracting its coordinates within the relative affine transformations. Similarly, readout neurons are used during the update of entry and temporary tape neurons, that happen at different stages of the simulation.
@@ -202,7 +202,7 @@ Note that readout and stage neurons are never quoted in this summary since are "
 For more details about the proof, please refer to appendix A of \cite{CHU21}
 
 \paragraph{Corollaries}
-By applying \ref{th:theorem1} multiple times, we can simulate each step of the computation of a Turing machine $\mathcal{M}$ and compute the same function (if defined). This result is explained in corollary 1.1 of the paper, where they state that if $\mathcal{P}*_{M}$ is defined, then
+By applying \ref{th:theorem1} multiple times, we can simulate each step of the computation of a Turing machine $\mathcal{M}$ and compute the same function (if defined). This result is explained in corollary 1.1 of the paper, where they state that if $\mathcal{P}^*_{M}$ is defined, then
 
 $$\rho^{-1}(\mathcal{T}^*_{W,b}(\rho(x))) = \mathcal{P}^*_{\mathcal{M}}(x)$$
 
@@ -271,7 +271,7 @@ where $d$ is the direction in which the head is moving and $s_L'$ is the shifted
 Having defined how this quantity varies through execution, we can proceed by analyzing the structure of the RNN. The general idea follows the proof of theorem \ref{th:theorem1} (we have all the 6 categories of neurons again), but we need to add a few more neurons to keep track of the pushing and popping operations:
 
 \begin{enumerate}
-    \setcounter{enumi}{7}
+    \setcounter{enumi}{6}
     \item Guard neurons, which will keep track of $h(|s_L|)$ and $h(|s_R|)$.
     \item Buffer neurons, that are required to compute intermediate values for tape updates: when active (thus, not equal to $0$), they hold the values popped from the stacks.
     \item Push-pop neurons $(u_L,o_L)$ and $(u_R,o_R)$, which access the memory modules, as described previously.
@@ -331,10 +331,11 @@ Again, it is sensible to take a closer look to the definition of $\rho$ before c
 \paragraph{Actual proof}
 The construction of this RNNs recycles most of the work done for theorem \ref{th:theorem2} but, instead of push and pop neurons, it introduces yet again two new types of nodes:
 
-\begin{itemize}
+\begin{enumerate}
+    \setcounter{enumi}{8}
     \item Stack neurons are introduced to replace growing memory modules: they are initialised through an application the freshly described $\rho^{(M)}$ and must encode the tape to the left and to the right of the head.
     \item Pointer neurons, which are istantiated with values calculated by a computation of the $\rho^{(d)}$ function; these nodes must keep track of which neurons contain relevant information. Note that these neurons can be seen as a one-hot-encoding of the sequences closest to the head, thus can be used to selectively execute operations on the stacks.
-\end{itemize}
+\end{enumerate}
 
 Moreover, buffer neurons do not access values within the external modules, but, instead, read values from the last non-zero values of the stack neurons.
 
@@ -376,13 +377,24 @@ The Transformer architecture has achieved state-of-the-art results on a range of
 As explained before, part of the wide success of this architecture is due to its non-recurrent nature, that allows for input vectorization and, thus, parallelized execution. This feature, although critical for speeding up the training procedure of various orders of magnitude with respect to classical sequence-to-sequence architectures (for example LSTMs or GRUs), makes real-world Transformers inherently not Turing-complete (the ability to loop is a required condition to simulate partial functions). In \cite{PER19}, the authors thus considered an alternative version of the original architecture in order to overcome this (and the following) issue:
 
 \begin{itemize}
-    \item The proof requires a system composed by one encoder and 3 decoders arranged sequentially. The output of the last component is then fed again as the input to the first in order to build a loop in the computation.
-    \item Since (analogously to \cite{SIE95}) in the paper they take into considerations only rational numbers of unbounded precision, they had to replace softmax attention with the hardmax function ($\sigma(x_i)=\frac{1}{m} \leftrightarrow x_i = \max(x)$, where $m$ is the number of maximal values within $x$) and the positional encodings with an alternative mapping that is explained in appendix B.4.2 of their supplementary material. 
+    \item The proof requires a system composed by one encoder and 3 decoders arranged sequentially. The output of the last component is then fed again as the input to the first decoder in order to build a loop in the computation.
+    \item Since (analogously to \cite{SIE95}) in the paper they take into considerations only rational numbers of unbounded precision, they had to replace softmax attention with the hardmax function ($\sigma(x_i)=\frac{1}{m} \leftrightarrow x_i = \max(x)$, where $m$ is the number of maximal values within $x$) and the positional encodings with an alternative mapping (where position $i$ is encoded as $[1, (i+1), 1/(i+1), 1/(i+1)^2]$) explained in appendix B.4.2 of their supplementary material.
 \end{itemize}
 
-We will now provide a brief overlook of their inductive proof: our objective is, given a Turing machine $\mathcal{M}$ and a configuration $x$, to use the system described above to simulate the transition of $\mathcal{M}$ to the following configuration.
+We will now provide a brief overlook of their inductive proof: our objective is, given a Turing machine $\mathcal{M}$ and an input string $w, |w|=n$, to use the system described above to show that any transition in the execution of $\mathcal{M}(w)$ can be simulated.
 
-The encoder receives a string containing the encoding for a sequence of state/read symbol pairs $(q_i,s_i)$, which at first are mapped into a list of one-hot-encoded embeddings, and then increased through the addition with positional encodings. The output of this component is a tuple, which encodes information about the state in which the machine is and the symbol under the head. The construction uses an additional lemma to state that, given the required information, the transition function $\delta$ of a Turing machine $\mathcal{M}$ (in the form of $(q_t,s_t) \to (q_{t+1}, w_{t+1}, m_{t+1})$, where $q_{t+1}$ is the new state, $w_{t+1}$ is the symbol written by the head and $m_{t+1}$ is the shift on the tape) can be simulated with a 2-layer feed forward network. The decoder is also able to determine the index of the head of the machine at a point in time using a layer of attention (again, showed in an additional lemma) by calculating all the movements $m_t$ executed from the start of the simulation. We need a final information, computed through the second decoder: given the sequence of previous movements $m_t$ and writings $w_t$, the network is able to determine the most recent timestamp in which the head was in the same location using self-attention. Knowing the previous sequence of movements and writings, the third decoder is able to calculate $q_{i+1}$ (already available since the first decoder) and $s_{i+1}$ (computed by looking at the last symbol written in corrispondence to the cell to which we just moved). The output of the network is again a string containing the sequence of pairs $(q_1,s_1)...(q_{i+1},s_{i+1})$, that can be used to continue the simulation of the Turing machine.
+The encoder receives as input $w$ and processes it through an embedding procedure and the addition with positional encodings. With the help of self-attention, it can trivially compute the a pair $(K^e, V^e)$, where $K^e$ a matrix of embeddings $k_1,...,k_n$ that encode the positions on the string. $V^e$, on the other hand, contains information abouth both the index and the symbol contained in each cell of the tape. 
+
+The real simulation begins at the input of the first decoder, which uses the provided pair $(K^e, V^e)$, along with an encoding of the pair $(q_0, s_0)$ (the initial state and the symbol under the head at the beginning of the computation) as input to compute $(q_1, s_1)$. More generally, the triple of ordered decoders will exploit self-attention, residual connections and feed forward layers to simulate, given the sequence $(q_0,s_0),(q_1,s_1),...,(q_{t-1},s_{t-1}),(q_t,s_t)$, the transition to $(q_{t+1},s_{t+1})$.
+This is done through 3 main steps (each one of them computed by a different decoder):
+
+\begin{enumerate}
+    \item Given the above described sequence encoded as $y_0,...,y_t$, we need first to augment it via positional encodings and then pass it through both an attention and a residual layer. This will allow us to process positional information to highlight relations between configurations at different steps, while keeping the positional encodings themselves for further computation. After a two layer feed forward network (described in detail in lemma B.2), this decoder outputs and embedding vector which encodes both $q_{t+1}$, $v_{t+1}$ (the symbol written by the head before movement at timestamp $t+1$) and $m_{t+1}$ (the movement at timestamp $t+1$). Effectively, this component is responsible of the implementation of the transition function $\delta$ of $M$.
+    \item The following decoder will use the previously computed information to compute the index of the head after the movement $c_{t+1}$. This is done, through the application of two attention layers and six feed forward neural networks (which construction is provided as additional lemmas in the supplementary material). The interesting part about this architecture is the use of residual connection to keep previously computed information intact during the computational flow: even if the data passes through multiple layers, information about $q_i$, $v_i$, $m_i$ (for $i \in {1,...,t}$) and the relative positional encodings is kept through all the steps by carefully modifying only some coordinates of the embeddings.
+    \item Finally, the last decoder is able to compute $s_{t+1}$ by calculating the last timestamp $i$ during which the head was in position $c_{t+1}$ and read the corrisponding written value $v_i$ via the attention mechanism paired with three different parallel feed forward networks. After passing the computed data through a last neural layer, we can succesfully re-structure the data calculated as the embedding of $(q_{t+1},s_{t+1})$.
+\end{enumerate}
+
+Clearly, the new pair $(q_{t+1},s_{t+1})$ is appended to the sequence $(q_0,s_0),...,(q_t,s_t)$ and passed again through the first decoder. We can consider the execution as concluded when the embedding of a final state ($q_{accept}$ or $q_{reject}$) is computed by the last decoder.
 
 We encourage reading the supplementary material of \cite{PER19} to understand in detail the actual construction.
 
@@ -393,13 +405,24 @@ CNNs have been successful in a wide range of computer vision tasks, including im
 
 In 2015, Kaiser and Sutskever \cite{KAI15} presented an alternative version of the convolutional GRU that allowed for fast parallel processing and (potentially) Turing complete capabilities: the \textbf{Neural GPU}. This architecture requires all the input sequence to be concatenated and encoded through an embedding matrix (similar to the input of the previously discussed Transformers) in order to avoid time-unfolding during the training phase: once the data is fed to the system, it is passed through a $l$-layer CGRU network without inputs, that exploits convolution to sequentially analyze the sequence. The state of the $l^{\textrm{th}}$ CGRU is then transformed by an "inverse embedding" matrix, that provides the result of the computation. In the introductory paper, the authors showed that this architecture is able to recognise long-term dependencies in the data and to perform hard algorithmic tasks, such as long addition and multiplication, sequence copying, reversing and duplicating and counting by sorting bits. Because of the outstanding capabilities showed, the authors hypothesized that the Neural GPU's computational power is equivalent to cellular automatas', which are knowingly Turing complete \cite{COO04}.
 
-The expressive power of Neural GPUs is actually analyzed in the main article of this section, \cite{PER19}. The authors prove that a slight variant of this architecture, if given looping capabilities, is actually able to simulate any encoder-decoder recurrent neural network for sequence-to-sequence learning. Thus, following the results provided by \cite{SIE95} (or, alternatively, \cite{CHU21}) we can conclude that it is also Turing complete (always keeping in mind that the construction would require unbounded precision).
+The expressive power of Neural GPUs is actually analyzed in the main article of this section, \cite{PER19}. The authors prove that a slight variant of this architecture, if given looping capabilities, is actually able to simulate any encoder-decoder recurrent neural network for sequence-to-sequence learning. 
+
+In particular, given an input $x, |x|=n$, an RNN encoder-decoder is defined by the following recursive equations:
+
+\begin{align}
+    h_i &= \sigma(x_iW + h_{i-1}V)\\
+    g_t &= \sigma(g_{t-1}U)
+\end{align}
+
+where $W, V$ and $U$ are weight matrices, $h_0 = \mathbf{0}$ is the input to the encoder and $g_0 = h_n$ is the input of the decoder.
+
+Following the results provided by \cite{SIE95} (or, alternatively, \cite{CHU21}) we can conclude that this architecture is also Turing complete (always keeping in mind that the construction would require unbounded precision).
 
 \paragraph{Proof sketch}
 
 Before discussing an overview of the actual proof, it is important to note that the CGRU, during the update of its internal state, uses a bias vector of size directly proportional to the one of the input sequence, thus the Neural GPU can not be considered a fixed architecture. To solve this issue, the authors introduced the idea of a \textit{uniform} Neural GPU, that is an analogous network such that for each bias $\mathbf{B} \in \mathbb{Q}^{n \times w \times d}$ there exists a matrix $B \in \mathbb{Q}^{w \times d}$ such that we have that $\mathbf{B}_i = B\ \forall i \in {1..n}$. With this additional requirement we obtain a class of architectures that can be finitely specified (the number of parameters is constant, without depending on the length of the input).
 
-The reduction of RNNs to Neural GPUs is quite long and cumbersome, but can be summarized as follows: given a encoder-decoder RNN (for language recognition) $N$, we simulate its execution through an ad-hoc constructed uniform Neural GPU, which multi-dimensional state is used for simulating the evolution of both the encoder and the decoder. To obtain the emulated state of these components at a timestamp $t$ it's sufficient to project the Neural GPU's state $\mathbf{S}$ onto the $t^{\textrm{th}}$ dimension: if the internal size of $N$ is $d$, then the encoder state is defined as $\mathbf{E}_t = \mathbf{S}_{t,1,1:d}$, while the decoder's is $\mathbf{D}_t = \mathbf{S}_{t,1,d+1:2d}$ (using Python's standard slicing notation). By using convolutional kernels that space above multiple dimensions we can update $\mathbf{E}_t$ and $\mathbf{D}_t$ through multiple CGRUs: at each timestamp $t$ $\mathbf{E}_t$ is updated, while $\mathbf{E}_{t-1}$ is reset to $0$ using the relevant memory gate. On the other hand, vectors in $\mathbf{D}$ are never reset, thus they can keep being updated, which allows us to simulate an arbitrary long computation. The proof provided in the article shows that the architecture constructed allows to simulate $N$ since, at each timestamp $t$, $\mathbf{E}_t$ equals to the output of the encoder, while $\mathbf{D}_t$ is equivalent to the output of the decoder. While this simulation seems at first pretty straightforward, the construction of the actual kernels used, along with the actual proof of correctness of the emulation is quite long with a not-so-intuitive use of notation.
+The reduction of RNNs to Neural GPUs is quite long and cumbersome, but can be summarized as follows: given a encoder-decoder RNN (for language recognition) $N$, we simulate its execution through an ad-hoc constructed uniform Neural GPU, which multi-dimensional state is used for simulating the evolution of both the encoder and the decoder. To obtain the emulated state of these components at a timestamp $t$ it's sufficient to project the Neural GPU's state $\mathbf{S}$ onto the $t^{\textrm{th}}$ dimension: if the internal size of $N$ is $d$, then the encoder state is encoded as $\mathbf{E}_t = \mathbf{S}_{t,1,1:d}$, while the decoders is embedded as $\mathbf{D}_t = \mathbf{S}_{t,1,d+1:2d}$ (using Python's standard slicing notation). By using convolutional kernels that space above multiple dimensions we can update $\mathbf{E}_t$ and $\mathbf{D}_t$ through a fixed number of CGRU applications on $\mathbf{S}_t$: at each timestamp $t$ $\mathbf{E}_t$ is updated, while $\mathbf{E}_{t-1}$ is reset to $0$ using the relative memory gate. This is necessary to ensure that each symbol of the input string is not processed by the convolutions more than once. On the other hand, vectors in $\mathbf{D}$ are never reset, thus they can keep being updated, which allows us to simulate an arbitrary long computation. The proof provided in the article shows that the architecture constructed allows to simulate $N$ since, at each timestamp $t$, $\mathbf{E}_t$ equals to the output of the encoder $h_t$, while $\mathbf{D}_{n+t}$ is equivalent to the output of the decoder $g_t$. This discrepancy is needed because the update of $\mathbf{D}_t$ must delayed with respect to $\mathbf{E}_t$'s, since $w$ must be completely processed before beginning the decoding part. While this simulation seems at first pretty straightforward, the construction of the actual kernels used, along with the actual proof of correctness of the emulation is quite long with a not-so-intuitive use of notation. For further understanding this argument we suggest to take a look at \cite{PER19}'s appendix C.
 
 This proof (sketch) demonstrates that uniform Neural GPUs are capable of simulating any encoder-decoder RNN architecture. Theorem 2.3 of \cite{PER19} generalizes \cite{SIE95} result about RNN's computational power to the latter networks, thus, by transitive property, we can conclude that also Neural GPUs are Turing complete. Interestingly enough, the article by Pérez, Marinković and Barceló also investigates how changing the way convolution kernel are constructed and slided over the state changes the power in computational power of the architecture:
 

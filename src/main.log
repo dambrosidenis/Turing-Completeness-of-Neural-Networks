@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.7.15)  7 MAR 2023 16:04
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.7.15)  17 MAR 2023 17:32
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -370,33 +370,40 @@ Overfull \hbox (3.26553pt too wide) in paragraph at lines 71--72
 ted as a 3-tuple $(\OML/cmm/m/it/10 q; l; r\OT1/cmr/m/n/10 )$,
  []
 
-[3] [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18]
-[19]
-Overfull \hbox (0.11174pt too wide) in paragraph at lines 431--432
+[3] [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16]
+Overfull \hbox (8.37193pt too wide) in paragraph at lines 397--398
+[]\OT1/cmr/m/n/10 Clearly, the new pair $(\OML/cmm/m/it/10 q[]; s[]\OT1/cmr/m/n
+/10 )$ is ap-pended to the se-quence $(\OML/cmm/m/it/10 q[]; s[]\OT1/cmr/m/n/10
+ )\OML/cmm/m/it/10 ; :::; \OT1/cmr/m/n/10 (\OML/cmm/m/it/10 q[]; s[]\OT1/cmr/m/
+n/10 )$
+ []
+
+[17] [18] [19] [20]
+Overfull \hbox (0.11174pt too wide) in paragraph at lines 454--455
 \OT1/cmr/m/n/10 dur-ing the pre-vi-ous times-tamp and the freshly com-puted con
 tent-adressing
  []
 
-[20] [21] [22] [23] [24] [25] (./main.bbl
+[21] [22] [23] [24] [25] [26] (./main.bbl
 Underfull \hbox (badness 1701) in paragraph at lines 28--33
 \OT1/cmr/m/n/10 Dani-helka, Ag-nieszka Grabska-Barwi^^Snska, Ser-gio Gomez Col-
 
  []
 
-[26
+[27
 
-]) [27] (./main.aux)
+]) [28] (./main.aux)
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: B6180D00A816F9B1333CC19F4D07E972;2975.
  ) 
 Here is how much of TeX's memory you used:
- 10052 strings out of 478268
- 153806 string characters out of 5846347
+ 10060 strings out of 478268
+ 153874 string characters out of 5846347
  447842 words of memory out of 5000000
  27997 multiletter control sequences out of 15000+600000
  481760 words of font info for 75 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 60i,9n,63p,1744b,460s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 60i,9n,63p,2114b,460s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc
 }</usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb>
 </usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><
@@ -422,10 +429,10 @@ st/fonts/type1/public/amsfonts/cm/cmti9.pfb></usr/local/texlive/2022/texmf-dist
 /fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr/local/texlive/2022/texmf-dist/f
 onts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2022/texmf-di
 st/fonts/type1/public/cm-super/sfrm1000.pfb>
-Output written on main.pdf (27 pages, 375926 bytes).
+Output written on main.pdf (28 pages, 380075 bytes).
 PDF statistics:
- 481 PDF objects out of 1000 (max. 8388607)
- 400 compressed objects within 4 object streams
- 123 named destinations out of 1000 (max. 500000)
+ 495 PDF objects out of 1000 (max. 8388607)
+ 412 compressed objects within 5 object streams
+ 131 named destinations out of 1000 (max. 500000)
  121 words of extra memory for PDF output out of 10000 (max. 10000000)
 
