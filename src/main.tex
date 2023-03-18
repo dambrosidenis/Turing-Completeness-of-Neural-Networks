@@ -383,14 +383,14 @@ As explained before, part of the wide success of this architecture is due to its
 
 We will now provide a brief overlook of their inductive proof: our objective is, given a Turing machine $\mathcal{M}$ and an input string $w, |w|=n$, to use the system described above to show that any transition in the execution of $\mathcal{M}(w)$ can be simulated.
 
-The encoder receives as input $w$ and processes it through an embedding procedure and the addition with positional encodings. With the help of self-attention, it can trivially compute the a pair $(K^e, V^e)$, where $K^e$ a matrix of embeddings $k_1,...,k_n$ that encode the positions on the string. $V^e$, on the other hand, contains information abouth both the index and the symbol contained in each cell of the tape. 
+The encoder receives as input $w$ and processes it through an embedding procedure and the addition with positional encodings. With the help of self-attention, it can trivially compute the a pair $(K^e, V^e)$, where $K^e$ is a vector of embeddings $k_1,...,k_n$ that encode the positions on the string. $V^e$, on the other hand, contains information abouth both the index and the symbol contained in each cell of the tape. 
 
-The real simulation begins at the input of the first decoder, which uses the provided pair $(K^e, V^e)$, along with an encoding of the pair $(q_0, s_0)$ (the initial state and the symbol under the head at the beginning of the computation) as input to compute $(q_1, s_1)$. More generally, the triple of ordered decoders will exploit self-attention, residual connections and feed forward layers to simulate, given the sequence $(q_0,s_0),(q_1,s_1),...,(q_{t-1},s_{t-1}),(q_t,s_t)$, the transition to $(q_{t+1},s_{t+1})$.
+The real simulation begins at the input of the first decoder, which uses the provided pair $(K^e, V^e)$, along with an encoding of the pair $(q_0, s_0)$ (the initial state and the symbol under the head at the beginning of the computation) as input to compute $(q_1, s_1)$ within three steps. More generally, the triple of ordered decoders will exploit self-attention, residual connections and feed forward layers to simulate, given the sequence $(q_0,s_0),(q_1,s_1),...,(q_{t-1},s_{t-1}),(q_t,s_t)$, the transition to $(q_{t+1},s_{t+1})$.
 This is done through 3 main steps (each one of them computed by a different decoder):
 
 \begin{enumerate}
     \item Given the above described sequence encoded as $y_0,...,y_t$, we need first to augment it via positional encodings and then pass it through both an attention and a residual layer. This will allow us to process positional information to highlight relations between configurations at different steps, while keeping the positional encodings themselves for further computation. After a two layer feed forward network (described in detail in lemma B.2), this decoder outputs and embedding vector which encodes both $q_{t+1}$, $v_{t+1}$ (the symbol written by the head before movement at timestamp $t+1$) and $m_{t+1}$ (the movement at timestamp $t+1$). Effectively, this component is responsible of the implementation of the transition function $\delta$ of $M$.
-    \item The following decoder will use the previously computed information to compute the index of the head after the movement $c_{t+1}$. This is done, through the application of two attention layers and six feed forward neural networks (which construction is provided as additional lemmas in the supplementary material). The interesting part about this architecture is the use of residual connection to keep previously computed information intact during the computational flow: even if the data passes through multiple layers, information about $q_i$, $v_i$, $m_i$ (for $i \in {1,...,t}$) and the relative positional encodings is kept through all the steps by carefully modifying only some coordinates of the embeddings.
+    \item The following decoder will use the previously computed information to compute the index of the head after the movement $c_{t+1}$ by taking into consideration all the movements from the start of the computation ($\sum_{i \in \{0,...,t+1\}}m_i$ since $m_i \in {-1,0,1} \forall i \in \{0,...,t+1\}$). This is done, through the application of two attention layers and six feed forward neural networks (which construction is provided as additional lemmas in the supplementary material). The interesting part about this architecture is the use of residual connection to keep previously computed information intact during the computational flow: even if the data passes through multiple layers, information about $q_i$, $v_i$, $m_i$ (for $i \in {1,...,t}$) and the relative positional encodings is kept through all the steps by carefully modifying only some coordinates of the embeddings.
     \item Finally, the last decoder is able to compute $s_{t+1}$ by calculating the last timestamp $i$ during which the head was in position $c_{t+1}$ and read the corrisponding written value $v_i$ via the attention mechanism paired with three different parallel feed forward networks. After passing the computed data through a last neural layer, we can succesfully re-structure the data calculated as the embedding of $(q_{t+1},s_{t+1})$.
 \end{enumerate}
 
@@ -444,14 +444,14 @@ At a high level, an NTM consists of two main components: a neural network that i
 The external memory module is accessed both in writing and reading operations at every timestamp through differentiable operations: during each iteration $t$, a set of vectors $[k_t, \beta_t, g_t, s_t, \gamma_t]$ is output by the network controller.
 
 \begin{itemize}
-    \item The first two values are used for content-based addressing of the memory matrix: the \textit{content-adressing weighting} is computed as
+    \item The first two values are used for content-based addressing of the memory matrix: the \textit{content-addressing weighting} is computed as
 
         \begin{equation}
             w_t^c[i] = \frac{\exp(\beta_t K(k_t, M_t[i]))}{\sum_j \exp(\beta_t K(k_t, M_t[j]))}
         \end{equation}
 
     In the previous equation, we have that each row of the matrix ($M_t(i)$) is compared with the key $k_t$ with the cosine similarity ($K(u,v) = \frac{u \cdot v}{||u|| ||v||}$). This measure is then passed through the softmax function to determine a probabilistic distribution over the memory cells. Note the use of $\beta$: this parameter can be altered to change the concentration of the distribution in order to have more or less exclusive access to the locations of the external module.
-    \item $g_t$ is used to determine an interpolation between a weighting calculated during the previous timestamp and the freshly computed content-adressing weighting
+    \item $g_t$ is used to determine an interpolation between a weighting calculated during the previous timestamp and the freshly computed content-addressing weighting
 
         \begin{equation}
             w_t^g = g_t w_t^c + (1-g_t)w_{t-1}
@@ -483,7 +483,7 @@ This weighting is then used both in reading and writing: the output of the syste
 while the update of the matrix is just a generalization of the \textbf{LSTM}'s long-term-memory update mechanism:
 
 \begin{align}
-    \tilde{M}_t[i] &= M_{t-1}(\mathbf{1}-w_t[i] e_t)\\
+    \tilde{M}_t[i] &= M_{t-1}[i](\mathbf{1}-w_t[i] e_t)\\
     M_t[i] &= \tilde{M}_t[i] + w_t[i] a_t
 \end{align}
 

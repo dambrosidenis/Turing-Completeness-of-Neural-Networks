@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.7.15)  17 MAR 2023 17:32
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.7.15)  18 MAR 2023 17:57
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -371,6 +371,12 @@ ted as a 3-tuple $(\OML/cmm/m/it/10 q; l; r\OT1/cmr/m/n/10 )$,
  []
 
 [3] [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16]
+Overfull \hbox (23.83517pt too wide) in paragraph at lines 393--394
+\OT1/cmr/m/n/10 sid-er-a-tion all the move-ments from the start of the com-pu-t
+a-tion ($[][] \OML/cmm/m/it/10 m[]$
+ []
+
+
 Overfull \hbox (8.37193pt too wide) in paragraph at lines 397--398
 []\OT1/cmr/m/n/10 Clearly, the new pair $(\OML/cmm/m/it/10 q[]; s[]\OT1/cmr/m/n
 /10 )$ is ap-pended to the se-quence $(\OML/cmm/m/it/10 q[]; s[]\OT1/cmr/m/n/10
@@ -379,9 +385,9 @@ n/10 )$
  []
 
 [17] [18] [19] [20]
-Overfull \hbox (0.11174pt too wide) in paragraph at lines 454--455
+Overfull \hbox (5.66731pt too wide) in paragraph at lines 454--455
 \OT1/cmr/m/n/10 dur-ing the pre-vi-ous times-tamp and the freshly com-puted con
-tent-adressing
+tent-addressing
  []
 
 [21] [22] [23] [24] [25] [26] (./main.bbl
@@ -429,7 +435,7 @@ st/fonts/type1/public/amsfonts/cm/cmti9.pfb></usr/local/texlive/2022/texmf-dist
 /fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr/local/texlive/2022/texmf-dist/f
 onts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2022/texmf-di
 st/fonts/type1/public/cm-super/sfrm1000.pfb>
-Output written on main.pdf (28 pages, 380075 bytes).
+Output written on main.pdf (28 pages, 380999 bytes).
 PDF statistics:
  495 PDF objects out of 1000 (max. 8388607)
  412 compressed objects within 5 object streams

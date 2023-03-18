@@ -273,15 +273,15 @@ Another strategy to build a Turing-machine simulating network would be to allow 
 
 To do so, we should, again, modify the encoding function $\rho$
 
-- $\rho^{(M)}:Q^* \to \mathbb{Q}^{\rceil \frac{|l|+|r|}{p}\lceil}$ does the same thing as before, but instead of stacking the encoded parts of the tapes, it concatenates them into a vector
-- $\rho^{(d)}:Q^* \to \{0,1\}^{\rceil \frac{|l|+|r|}{p}\lceil}$ embeds (with a one-hot-encoding) the coordinate of the last neuron encoding at least a non-blank symbol
+- $\rho^{(M)}:Q^* \to \mathbb{Q}^{\lceil \frac{|l|+|r|}{p}\rceil}$ does the same thing as before, but instead of stacking the encoded parts of the tapes, it concatenates them into a vector
+- $\rho^{(d)}:Q^* \to \{0,1\}^{\lceil \frac{|l|+|r|}{p}\rceil}$ embeds (with a one-hot-encoding) the coordinate of the last neuron encoding at least a non-blank symbol
 
 ---
 
 ## Turing completeness of general RNNs
 ##### Unbounded neurons
 
-Again, we need to include some additional categories of nodes (but we can exclude pop-push neurons of course):
+Again, we need to include some additional categories of nodes (but we can forget pop-push neurons of course):
 
 9. Stack neurons are introduced to replace growing memory modules
 10. Pointer neurons, that must keep track of which neurons contain relevant information about the encoded tapes
@@ -293,8 +293,361 @@ Moreover, buffer neurons do not access values within the external modules, but, 
 ## Turing completeness of general RNNs
 ##### Unbounded neurons
 
-The simulation is analogous to the previous one, apart from the last stage, where the newly introduced neurons are used to update the "emulated" stacks: if the tape neuron holds less than $1$ symbol after the update, we pop the stack node (that is, setting the last non-zero stack neuron to $0$, changing the relative pointer nodes and updating the tape and readout values). On the other hand, if the tape neuron holds more than $p$ symbols after the update, we push the bottom $p$ symbols of the tape node onto the stack neurons (by setting the first zero neuron pointed by the pointer nodes to the value to be pushed).
+The simulation is analogous to the previous one, apart from the last stage, where the newly introduced neurons are used to update the "emulated" stacks: if the tape neuron holds less than $1$ symbol after the update, we pop the stack node (that is, setting the last non-zero stack neuron to $0$, changing the relative pointer nodes and updating the tape and readout values).
+On the other hand, if the tape neuron holds more than $p$ symbols after the update, we push the bottom $p$ symbols of the tape node onto the stack neurons (by setting the first zero neuron pointed by the pointer nodes to the value to be pushed).
 
 ---
 
 ## Turing completeness of modern architectures
+##### Models based on attention
+
+Introduced in 2017, the Transformer-based networks have taken the Natural Language Processing world by storm
+
+A _Transformer_ consists in a modular architecture composed by two main types of independent components:
+
+- Encoders, which analyze a sequence of embedded symbols to find relations between the input tokens
+- Decoders, which exploit the found relations to produce a sensible transformation on the input
+
+---
+
+## Turing completeness of modern architectures
+##### Models based on attention
+
+Transformers introduced two key innovations:
+
+1. Positional encodings, which allow for parallel computation of sequences while still preserving ordering information
+2. Self-attention, which exploits the previous point to (potentially) attend at each position of the input sequence at once
+
+---
+
+## Turing completeness of modern architectures
+##### Models based on attention
+
+![](transformers.png)
+
+---
+
+## Turing completeness of modern architectures
+##### Models based on attention
+
+The architecture taken into consideration for the Turing completeness proof present some slight modification from the original concept:
+
+- Instead of a system made up of $N$ encoders and $N$ decoders, our architecture has $1$ encoder and $3$ decoders. The output of the last decoder is then fed again as input to the first one to provide looping capabilities
+- We take into consideration only rational activations, thus the following functions have been changed:
+    - The softmax function ($\sigma(x_i) = \frac{e^{x_i}}{\sum_{j=1}^{n} e^{x_j}}$) has been replaced by hardmax attention ($\sigma(x_i)=\frac{1}{m} \leftrightarrow x_i = \max(x)$, where $m$ is the number of maximal values within $x$)
+    - The original positional encodings, based on trigonometric functions, have been changed with a polynomial alternative
+
+---
+
+## Turing completeness of modern architectures
+##### Models based on attention
+
+We want to show that, given a Turing machine $\mathcal{M}$, we can construct a transformer architecture $\textrm{Trans}_{\mathcal{M}}$ such that, for any input string $w, n=|w|$, $\mathcal{M}(w) = \textrm{Trans}_{\mathcal{M}}(w)$
+
+---
+
+## Turing completeness of modern architectures
+##### Models based on attention
+
+The first encoder receives $w$ after a transformation obtained via an embedding procedure and the positional encodings function
+
+It outputs a pair $(K^e,V^e)$, where
+
+- $K^e = k_1,...,k_n$ is a vector of embeddings that encode the indexes of $w$'s symbols
+- $V^e = v_1,...,v_n$ is a vector of embeddings that encode both the indexes and the symbols of $w$
+
+---
+
+## Turing completeness of modern architectures
+##### Models based on attention
+
+The first decoder receives both $(K^e,V^e)$ and a valid encoding of the starting configuration $(q_0,s_0)$ as input: our objective is to produce the sequence $(q_0,s_0),(q_1,s_1)$ as output of the last decoder.
+
+More generally, the proof is inductive and wants to show that it's possible, given the sequence $(q_0,s_0),(q_1,s_1),...,(q_{t-1},s_{t-1}),(q_t,s_t)$ as input for the first decoder, to produce $(q_{t+1},s_{t+1})$ and append it to the sequence before the next cycle
+
+---
+
+## Turing completeness of modern architectures
+##### Models based on attention
+
+The first layer uses the input sequence and $(K^e,V^e)$ to produce an embedding vector which encodes $(q_{t+1}, v_{t+1}, m_{t+1})$, where
+
+- $q_{t+1} \in Q_\mathcal{M}$ is the next state of the configuration
+- $v_{t+1} \in \Gamma_\mathcal{M}$ is the symbol written by the head
+- $m_{t+1} \in \{-1,0,1\}$ is the movement of the head
+
+In fact, this component implements $\mathcal{M}$'s transition function $\delta$
+
+---
+
+## Turing completeness of modern architectures
+##### Models based on attention
+
+The second decoder uses the previously computed information of the sequence to compute the position of the head $c_{t+1}$
+
+It's easy to see that
+
+$$c_{t+1} = \sum_{i \in \{0,...,t+1\}} m_i$$
+
+---
+
+## Turing completeness of modern architectures
+##### Models based on attention
+
+The last decoder computes $s_{t+1}$ by calculating the last timestamp $i$ during which the had was in position $c_{t+1}$:
+
+$$s_{t+1} = v_i$$
+
+since it was the last symbol written in the corrisponding location
+
+Finally, it needs to re-structure the data to successfully output a valid embedding of $(q_{t+1},s_{t+1})$
+
+---
+
+## Turing completeness of modern architectures
+##### Models based on recurrent convolutions
+
+_Convolutional Neural Networks_ were intially designed to process grid-arranged data by sliding a set of filters over the input to extract relevant features from it before applying standard feed forward layers
+
+The most obvious application of such an architecture is in the computer vision field, since images can be naturally saved as multi-dimensional grids of pixels
+
+---
+
+## Turing completeness of modern architectures
+##### Models based on recurrent convolutions
+
+Alternatively, in order to process sequential data, convolutional layers can be implement within recurrent architectures to both extract local features from data and capture temporal relationships between information
+
+An example of this would be in the _convolutional GRU_
+
+---
+
+## Turing completeness of modern architectures
+##### Models based on recurrent convolutions
+
+![](gru.jpg)
+
+---
+
+## Turing completeness of modern architectures
+##### Models based on recurrent convolutions
+
+![](cgru.jpg)
+
+---
+
+## Turing completeness of modern architectures
+##### Models based on recurrent convolutions
+
+Based on the idea of a CGRU, in 2015 the concept of a _Neural GPU_ was proposed
+
+It consists in a $l$-layer CGRU, where all the input sequence must be concatenated and encoded through an embedding matrix into the initial state of the system to avoid unfolding through time during the training phase
+
+---
+
+## Turing completeness of modern architectures
+##### Models based on recurrent convolutions
+
+The size of the bias parameters in a standard Neural GPU depends on the length of the input sequence
+
+The Turing completeness requires a slightly modified version of the architecture to fix the number of parameters in the bias vectors and, thus, obtain a fixed architecture: this modified network is called a _uniform GPU_
+
+---
+
+## Turing completeness of modern architectures
+##### Models based on recurrent convolutions
+
+It can be shown that uniform Neural GPUs, if given looping capabilities, can simulate any encoder-decoder RNN, which evolution can be described through the following equations:
+
+
+$$\begin{align}
+    h_i &= \sigma(x_iW + h_{i-1}V)\\
+    g_t &= \sigma(g_{t-1}U)
+\end{align}$$
+
+Where $x, |x|=n$ is the input string, $h_0 = \mathbf{0}$ is the initial state of the encoder, $g_0 = h_n$ is the input of the decoder and $W,V,U$ are weight matrices
+
+---
+
+## Turing completeness of modern architectures
+##### Models based on recurrent convolutions
+
+The proof can be sketched as follows:
+
+During the $t$-th cycle of computation of the Neural GPU, the $t$-th component of the state of the architecture $\mathbf{S}_{t,1,:}$ is computed based on the previous activations. Given that the size of the internal state of the network we want to simulate has size $d$, we can see $\mathbf{S}_{t,1,:}$ as two stacked vectors, $\mathbf{E}_t = \mathbf{S}_{t,1,1:d}$ and $\mathbf{D}_t = \mathbf{S}_{t,1,d+1:2d+1}$
+
+---
+
+## Turing completeness of modern architectures
+##### Models based on recurrent convolutions
+
+During the simulation, these vectors will have the same values as the outputs of the encoder and the decoder (respectively) of the RNN:
+
+$$\begin{align}
+\mathbf{E}_t &= h_t\\
+\mathbf{D}_{n+t} &= g_t
+\end{align}$$
+
+Remember that $n$ is the length of the input string, thus the discrepancy of the indexes is due to the preprocessing steps of the encoder
+
+---
+
+## Turing completeness of modern architectures
+##### Models based on recurrent convolutions
+
+It's possible to show (by reduction to the previously introduced results) that encoder-decoder RNNs are Turing complete, thus also uniform Neural GPUs have the same expressiveness
+
+Interestingly, this computational power is easily lost if we change even so slightly the convolutional features of the architecture:
+
+- if we exchange _zero-padding_ with _circular convolutions_
+- if we take into consideration $(1,1,d,d)$ sized filters instead of $(2,1,d,d)$ (in this case each value of $\mathbf{S}_t$ would only depend from the activation of the same cell in $\mathbf{S}_{t-1}$)
+
+---
+
+## 3. Practical implementations of Turing-complete networks
+
+- The Neural Turing Machine
+- The Differentiable Neural Computer
+
+---
+
+## Practical implementations of Turing-complete networks
+##### The Neural Turing Machine
+
+A _Neural Turing Machine_ is an architecture composed of two main modules:
+
+- A (neural network) controller
+- A memory matrix (made up of a set of vectors that we will call _locations_)
+
+The memory is accessed in reading and writing only through completely differentiable operations executed by the _read_ and _write head_
+
+---
+
+## Practical implementations of Turing-complete networks
+##### The Neural Turing Machine
+
+At each timestamp, the controller receives an input and produces:
+
+- A _raw output_ vector
+- An _interface_ vector, used to update and read from the memory module
+
+The values contained in the raw vector will be then combined with the information read from the memory to provide the actual output for the current timestamp
+
+---
+
+## Practical implementations of Turing-complete networks
+##### The Neural Turing Machine
+
+At each timestamp $t$, the objective of the network is to compute a probability distributions over the rows of the memory module to access the stored information as a complex combination over the different locations
+
+We will call these distribution _weighting_ $w_t$
+
+---
+
+## Practical implementations of Turing-complete networks
+##### The Neural Turing Machine
+
+To determine $w_t$ we need to compute a set of auxiliary values:
+
+- A _content-addressing weighting_ $w_t^c$, which uses a softmax calculation to determine a probability distribution over the locations according to the (cosine) similarity of each row to a vector output by the controller (called the _key_ $k_t$)
+- An _interpolation weighting_ $w_t^g$ that combines $w_t^c$ with $w_{t-1}$ through a mechanism very similar to the GRU's update gate
+- A _convolution weighting_ $\tilde{w}_t$ that uses $w_t^g$ and a _shift vector_ $s_t$ output by the controller to determine the degree of left or right shifts in the read and write operations of the memory matrix
+
+---
+
+## Practical implementations of Turing-complete networks
+##### The Neural Turing Machine
+
+$\tilde{w}_t$ is passed through a last softmax application to determine the final weighting for the timestamp $w_t$
+
+This weighting is used to access the memory $M_t$ both in reading and writing:
+
+- Writing: $M_t = M_{t-1} \odot (\mathbf{1}-w_t e_t^T) + w_t a_t^T$
+- Reading: $r_t = M_t^T w_t$
+
+Where $\mathbf{1}$ is a matrix of the same size of $M_t$ of only ones, $\odot$ is the pointwise multiplication, $e_t$ and $a_t$ are, respectively, the _erase_ and _add vectors_ output by the controller
+
+---
+
+## Practical implementations of Turing-complete networks
+##### The Neural Turing Machine
+
+This machine could, potentially, learn through backpropagation how to simulate a space-bounded Turing machine
+
+In practice, its training process would be lenghty due to its non parallelizable nature+
+
+Furthermore, it lacks the mechanisms to deliberately free unused memory and to ensure that "allocated" blocks do not overlap each other, thus limiting its ability to process extended sequences
+
+---
+
+## Practical implementations of Turing-complete networks
+##### The Differentiable Neural Computer
+
+The same research team that introduced the Neural Turing Machine in 2014 rivisited the concept two years later to overcome some of the issues arisen
+
+In 2016 they presented the _Differentiable Neural Computer_, an inproved version of the NTM capable of re-using memory with mechanism very similar to regular computers' memory management procedures
+
+---
+
+## Practical implementations of Turing-complete networks
+##### The Differentiable Neural Computer
+
+With respect to the NTM, the DNC allows for multiple read heads, but essentially the memory access equations remain the same as before (although a little generalized to account of more read vectors)
+
+On the other hand, the operations that define the weightings (that are separated into _read_ and _write_ weightings this time) are different
+
+---
+
+## Practical implementations of Turing-complete networks
+##### The Differentiable Neural Computer
+
+Write weightings now take into consideration how much a location is allocable: each address' allocability is directly proportional to the intensity of the last writing operation and inverserly proportional to the last reading operation that was executed on it
+
+By doing this through a careful set of operations, we can define a differentiable analogous to the classical _free list_, that allows us to ensure that important data is not overwritten by the last operations
+
+If, on the other hand, we specifically wanted to overwrite a location, we still had content-based addressing at our disposal
+
+The discrimination between the two modes is done through an interpolation procedure
+
+---
+
+## Practical implementations of Turing-complete networks
+##### The Differentiable Neural Computer
+
+Similarly, we could either read from memory through content-based addressing or by accessing a _memory linkage matrix_: we store a separated data structure that keeps track of how much every location was written to with respect to all the others in the last "intense" writing operation to preserve sequential information
+
+This structure can be accessed either "normally" or "in reverse" (in practice, trasposed) to read or write data in the same order as before
+
+Again, the mediation between the three access modes is obtained through a convex combination with a probability distribution output by the controller
+
+---
+
+## 4. Conclusions
+
+- Summary
+- Future work
+
+---
+
+## Conclusions
+##### Summary
+
+In this presentation, we took a look at the expressive power of neural networks from multiple perspectives:
+
+- We analyzed the more theoretical results, which showed us that RNNs can be seen as a reasonable model of computation
+- We presented some practical implementations of (potentially) Turing complete architectures, which may be the next step towards a truly general A.I.
+
+---
+
+## Conclusions
+##### Future work
+
+In the future we may expect developments in the following areas:
+
+1. An alternative learning paradigm that doesn't require differentiation to actually implement the growing memory modules architecture
+2. An alternative version of the growing memory modules that allow for differentiable alternatives to the standard stack operations
+3. Further exploring in the memory-augmented neural networks field for algorithms learning
+
+---
+
+# Thanks for the attention
