@@ -91,6 +91,7 @@ If you use this work in your research, please cite it as follows:
     author = {D'Ambrosi, Denis},
     month = feb,
     title = {{Turing Completeness of Neural Networks Architectures: a Review}},
+    url = {https://github.com/dambrosidenis/Turing_Completeness_of_Neural_Network_Architectures/},
     version = {1.0.0},
     year = {2023}
 }
