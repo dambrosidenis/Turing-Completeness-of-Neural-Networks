@@ -10,6 +10,7 @@ This repository has been created with the sole objective of sharing a comprehens
 - [Getting Started](#getting-started)
 - [Article](#article)
 - [Presentation](#presentation)
+- [Citation](#citation)
 - [License](#license)
 
 ## Introduction
