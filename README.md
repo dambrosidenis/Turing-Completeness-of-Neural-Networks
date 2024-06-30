@@ -1,4 +1,4 @@
-# Turing Completeness of Neural Networks Architectures: a Review
+# Turing Completeness of Neural Network Architectures: a Review
 
 This repository has been created with the sole objective of sharing a comprehensive literature review about the expressive capabilities of different Neural Network architectures from a theoretical perspective.
 
@@ -54,7 +54,7 @@ To explore the contents of this repository, follow the steps below:
 1. **Clone the Repository:**
 
    ```bash
-   git clone https://github.com/yourusername/Turing-Completeness-Neural-Networks.git
+   git clone https://github.com/dambrosidenis/Turing-Completeness-Neural-Network_Architectures.git
    cd Turing-Completeness-Neural-Networks
    ```
 
