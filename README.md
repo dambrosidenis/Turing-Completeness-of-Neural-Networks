@@ -1,4 +1,4 @@
-# Turing Completeness of Neural Networks Architectures: a Review
+# Turing Completeness of Neural Network Architectures: a Review
 
 This repository has been created with the sole objective of sharing a comprehensive literature review about the expressive capabilities of different Neural Network architectures from a theoretical perspective.
 
@@ -10,6 +10,7 @@ This repository has been created with the sole objective of sharing a comprehens
 - [Getting Started](#getting-started)
 - [Article](#article)
 - [Presentation](#presentation)
+- [Citation](#citation)
 - [License](#license)
 
 ## Introduction
