@@ -92,7 +92,7 @@ If you use this work in your research, please cite it as follows:
     title = {{Turing Completeness of Neural Networks Architectures: a Review}},
     version = {1.0.0},
     year = {2023}
-    }
+}
 ```
 
 ## License
