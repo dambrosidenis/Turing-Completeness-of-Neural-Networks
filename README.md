@@ -86,7 +86,13 @@ The source files for the presentation, including images and styles, are located 
 If you use this work in your research, please cite it as follows:
 
 ```
-CITATION
+@software{D_Ambrosi_Turing_Completeness_of_2023,
+    author = {D'Ambrosi, Denis},
+    month = feb,
+    title = {{Turing Completeness of Neural Networks Architectures: a Review}},
+    version = {1.0.0},
+    year = {2023}
+    }
 ```
 
 ## License
