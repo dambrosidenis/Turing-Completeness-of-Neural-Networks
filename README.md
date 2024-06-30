@@ -53,8 +53,8 @@ To explore the contents of this repository, follow the steps below:
 1. **Clone the Repository:**
 
    ```bash
-   git clone https://github.com/yourusername/Turing-Completeness-Neural-Networks.git
-   cd Turing-Completeness-Neural-Networks
+   git clone https://github.com/dambrosidenis/Turing_Completeness_of_Neural_Network_Architectures.git
+   cd Turing_Completeness_of_Neural_Network_Architectures
    ```
 
 2. **View the Article:**
